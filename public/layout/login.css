@@ -1,0 +1,74 @@
+body{
+    background: url("/images/bg.png") center 92px no-repeat;
+    background-size: cover;
+}
+
+.auth-page{
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    max-width: 390px;
+    margin: 50px auto;
+}
+
+.auth-page .input-group{
+    margin-bottom: 20px;
+}
+.auth-page .input{
+    width: 100%;
+    background: transparent 26px center no-repeat;
+    padding-left: 58px;
+}
+.auth-page .input-email{background-image: url("/images/login.svg")}
+.auth-page .input-password{background-image: url("/images/lock.svg")}
+.auth-page .btn{
+    width: 100%;
+    margin-bottom: 19px;
+}
+.auth-page .forgot-password-link{
+    font-size: 14px;
+    font-weight: 400;
+    float: right;
+    margin-bottom: 28px;
+}
+.auth-page .hr{
+    clear: both;
+    font-size: 14px;
+    text-align: center;
+    position: relative;
+    margin-bottom: 31px;
+}
+.auth-page .hr:before, .auth-page .hr:after{
+    content: '';
+    display: inline-block;
+    height: 0;
+    position: absolute;
+    border-bottom: 1px solid #A4A4A4;
+    width: 41%;
+    top: 7px;
+}
+.auth-page .hr:before{
+    left: 0;
+}
+.auth-page .hr:after{
+    right: 0;
+}
+.auth-page h3{
+    text-align: center; font-weight: 500;
+}
+.auth-page .social-link-wrapper{display: flex;align-items: center;justify-content: center;padding: 19px 0 0 0;gap: 18px;}
+
+.auth-page .social-link-wrapper a{
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    border: 1px solid #DBDBDB;
+    background: white;
+    transition: border-color 200ms ease;
+}
+.auth-page .social-link-wrapper a:hover{
+    border-color:#BBB;
+}
+.auth-page .social-link-wrapper a:active{
+    transform: translate(-0.5px, 0.5px);
+}
