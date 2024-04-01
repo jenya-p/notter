@@ -29,7 +29,7 @@ export default {
 </script>
 
 <template>
-    <label class="checkbox">
+    <label class="radio">
         <input type="radio" :value="value" v-model="proxy" :disabled="disabled">
         <i class="mark"></i>
         <span v-if="!!$slots.default"><slot /></span>
@@ -38,7 +38,7 @@ export default {
 
 <style scoped lang="scss">
 
-.checkbox {
+.radio {
     position: relative;
     user-select: none;
     font-weight: normal;
@@ -46,6 +46,7 @@ export default {
     margin-bottom: 0;
     cursor: pointer;
     line-height: 23px;
+    display: inline-block;
 
     input[type=radio] {
         position: absolute;

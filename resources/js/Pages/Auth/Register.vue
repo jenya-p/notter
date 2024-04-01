@@ -19,7 +19,7 @@ const submit = () => {
 </script>
 
 <template>
-    <GuestLayout wrapper-class="auth-page">
+    <GuestLayout wrapper-class="auth-page" title="Регистрация">
 
         <form @submit.prevent="submit" class="block">
 

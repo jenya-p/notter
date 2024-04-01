@@ -25,7 +25,7 @@ const submit = () => {
 </script>
 
 <template>
-    <GuestLayout wrapper-class="auth-page">
+    <GuestLayout wrapper-class="auth-page" title="Вход">
         <form @submit.prevent="submit" class="block">
             <h1>Вход</h1>
 

@@ -1,5 +1,5 @@
 <template>
-    <GuestLayout wrapper-class="profile-page">
+    <GuestLayout wrapper-class="profile-page" title="Нотариальный тест (Блок 1)">
         <h1>Нотариальный тест (Блок 1)</h1>
         <div class="block block-1">
             <Paginator v-model="b" :count="50" class="paginator-gray" label="Билет: "/>

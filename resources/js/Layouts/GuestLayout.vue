@@ -1,9 +1,9 @@
 <script>
 import {Link} from '@inertiajs/vue3';
-
+import {Head} from "@inertiajs/vue3";
 export default {
-    components: {Link},
-    props: ['wrapperClass'],
+    components: {Link, Head},
+    props: ['wrapperClass', 'title'],
     mounted() {
         if(this.wrapperClass == 'index-page' || this.wrapperClass == 'content-page'){
             document.body.classList.add('green-decorator');
@@ -28,6 +28,7 @@ export default {
 
 <template>
     <div class="lay-wrapper">
+        <Head :title="title" />
         <div class="header-wrapper">
             <div class="sidebar" ref="sidebar">
                 <div class="sidebar-header">

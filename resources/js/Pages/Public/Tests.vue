@@ -1,5 +1,5 @@
 <template>
-    <GuestLayout wrapper-class="profile-page">
+    <GuestLayout wrapper-class="profile-page" title="Нотариальный тест (Блок 1)">
         <div class="block">
             <h1>Нотариальный тест (Блок 1)</h1>
             <h3>Вы приступаете к тесту “Нотариальный тест (Блок 1)”</h3>
@@ -14,7 +14,6 @@
 
             <Link :href="route('test')" class="btn btn-green">Начать</Link>
         </div>
-
     </GuestLayout>
 </template>
 

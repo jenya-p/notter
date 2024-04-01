@@ -72,6 +72,17 @@ defineProps(['content'])
 
         img {
             max-width: 270px;
+            margin: 40px auto 0;
+        }
+
+    }
+
+    @media screen and (max-width: 500px) {
+        padding: 0 10px 50px 10px;
+        text-align: center;
+
+        img {
+            max-width: 270px;
             margin-top: 40px;
         }
 

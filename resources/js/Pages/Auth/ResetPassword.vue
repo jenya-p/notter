@@ -32,7 +32,7 @@ const submit = () => {
 </script>
 
 <template>
-    <GuestLayout wrapper-class="auth-page">
+    <GuestLayout wrapper-class="auth-page" title="Восстановление пароля">
 
         <form @submit.prevent="submit" class="block">
             <h1>Восстановление пароля</h1>

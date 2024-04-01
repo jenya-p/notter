@@ -7,10 +7,9 @@ use App\Models\Content;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
-class HomeController extends Controller
-{
+class HomeController extends Controller {
 
-    public function home(){
+    public function home() {
 
         return Inertia::render('Public/Home', [
             'content' => \App\Models\Content::find('home')
@@ -19,31 +18,27 @@ class HomeController extends Controller
     }
 
 
-    public function content($slug){
+    public function content($slug) {
         return Inertia::render('Public/Content', [
             'content' => \App\Models\Content::find($slug)
         ]);
     }
 
 
-
-
-    public function prices(){
+    public function prices() {
 
         return Inertia::render('Public/Prices', []);
 
     }
 
 
-
-    public function tests(){
-        return Inertia::render('Public/Tests', [
-        ]);
+    public function tests() {
+        return Inertia::render('Public/Tests', []);
 
     }
 
 
-    public function test(){
+    public function test() {
 
         return Inertia::render('Public/Test', []);
 

@@ -45,6 +45,7 @@ export default {
     padding-left: 2.2em;
     margin-bottom: 0;
     cursor: pointer;
+    display: inline-block;
 
     input[type=checkbox] {
         position: absolute;

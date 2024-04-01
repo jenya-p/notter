@@ -215,8 +215,8 @@ header{
         position: fixed;
         left: 0;
         top: 0;
-        /* bottom: 0; */
         right: 0;
+        z-index: 1;
         background: white;
         box-shadow: 0 50px 0 100vh #0000005c;
         padding: 0 25px 40px;
