@@ -51,7 +51,7 @@ export default {
 </script>
 
 <template>
-    <div :class="fieldClass">
+    <div class="field" :class="fieldClass">
         <label class="input-label" v-if="label!==undefined">{{ label }}</label>
         <div>
             <div :class="{'has-danger': hasErrors}">
