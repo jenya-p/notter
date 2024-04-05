@@ -6,6 +6,8 @@
 
         <title inertia>{{ config('app.name', 'Notter') }}</title>
 
+        <link rel="icon" type="image/svg+xml" href="/images/logo-s.svg">
+
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>

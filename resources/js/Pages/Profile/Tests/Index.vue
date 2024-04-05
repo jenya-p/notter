@@ -49,25 +49,28 @@ export default {
 
                     <tbody>
                     <tr href="">
-                        <td>Нотариальный тест (Блок 1)</td>
-                        <td class="font-inter">4 апр. 2024 г.</td>
-                        <td class="color-green font-inter">57 (98%)</td>
-                        <td class="color-red font-inter">3 (2%)</td>
-                        <td class="color-green">Активен</td>
+                        <td class="m-title">Нотариальный тест (Блок 1)</td>
+                        <td class="font-inter"><span class="m-label">Действует до: </span><span class="nobr">4 апр. 2024 г.</span></td>
+                        <td class="color-green font-inter d-only nobr">57 (98%)</td>
+                        <td class="color-red font-inter d-only nobr">3 (2%)</td>
+                        <td class="m-only font-inter"><span class="m-label">Статистика: </span><span class="color-green">57 (98%)</span> / <span class="color-red">3 (2%)</span></td>
+                        <td><span class="m-label">Состояние: </span><span class="color-green">Активен</span></td>
                     </tr>
                     <tr href="">
-                        <td>Нотариальный тест (Блок 2)</td>
-                        <td class="font-inter">1 янв. 2024 г.</td>
-                        <td class="color-green font-inter">57 (98%)</td>
-                        <td class="color-red font-inter">3 (2%)</td>
-                        <td class="color-red">Окончен</td>
+                        <td class="m-title">Нотариальный тест (Блок 2)</td>
+                        <td class="font-inter"><span class="m-label">Действует до: </span><span class="nobr">1 янв. 2024 г.</span></td>
+                        <td class="color-green font-inter d-only nobr">57 (98%)</td>
+                        <td class="color-red font-inter d-only nobr">3 (2%)</td>
+                        <td class="m-only font-inter"><span class="m-label">Статистика: </span><span class="color-green">57 (98%)</span> / <span class="color-red">3 (2%)</span></td>
+                        <td><span class="m-label">Состояние: </span><span class="color-red">Окончен</span></td>
                     </tr>
                     <tr href="">
-                        <td>Список вопросов выносимый на зачет</td>
-                        <td class="font-inter">4 апр. 2024 г.</td>
-                        <td class="color-green font-inter">57 (98%)</td>
-                        <td class="color-red font-inter">3 (2%)</td>
-                        <td class="color-green">Активен</td>
+                        <td class="m-title">Список вопросов выносимый на зачет вопросов выносимый на зачет вопросов выносимый на зачет вопросов выносимый на зачет вопросов выносимый на зачет</td>
+                        <td class="font-inter"><span class="m-label">Действует до: </span><span class="nobr">4 апр. 2024 г.</span></td>
+                        <td class="color-green font-inter d-only nobr"></td>
+                        <td class="color-red font-inter d-only nobr">3 (2%)</td>
+                        <td class="m-only font-inter"><span class="m-label">Статистика: </span><span class="color-green">57 (98%)</span> / <span class="color-red">3 (2%)</span></td>
+                        <td><span class="m-label">Состояние: </span><span class="color-green">Активен</span></td>
                     </tr>
                     </tbody>
                 </table>

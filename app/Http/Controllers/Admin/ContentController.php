@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Content;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
+use Inertia\Inertia;
 
 class ContentController extends Controller
 {
@@ -13,39 +15,17 @@ class ContentController extends Controller
      */
     public function index()
     {
-        //
+        return Inertia::render('Admin/Content/Index', ['items' => Content::all()->append('snippet')]);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(Content $content)
-    {
-        //
-    }
 
     /**
      * Show the form for editing the specified resource.
      */
     public function edit(Content $content)
     {
-        //
+        return Inertia::render('Admin/Content/Edit', ['item' => $content]);
     }
 
     /**
@@ -53,14 +33,13 @@ class ContentController extends Controller
      */
     public function update(Request $request, Content $content)
     {
-        //
+        $data = $request->validate([
+            'title' => 'required|string|max:256|min:4',
+            'content' => 'required|string'
+        ]);
+
+        $content->update($data);
+        return \Redirect::route('admin.content.index');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Content $content)
-    {
-        //
-    }
 }

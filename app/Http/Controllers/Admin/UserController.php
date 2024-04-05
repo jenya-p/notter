@@ -3,7 +3,9 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Accident;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
@@ -14,9 +16,23 @@ class UserController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        return Inertia::render('Admin/User/Index', ['items' => User::all()])->rootView('admin');
+
+        $query = User::query();
+        $filter = trim($request->filter);
+        if(!empty($filter)){
+            $lcQuery = '%' . mb_strtolower(trim($filter)) . '%';
+            $query->whereRaw('name like ? or email like ?', [$lcQuery,$lcQuery]);
+        }
+
+        if(!empty($request->sort)){
+            list($name, $dir) = explode(':', $request->sort);
+            $query->orderBy($name, $dir);
+        }
+        $query->orderBy('id', 'asc');
+
+        return Inertia::render('Admin/User/Index', ['items' => $query->paginate(50)]);
     }
 
     public function create() {

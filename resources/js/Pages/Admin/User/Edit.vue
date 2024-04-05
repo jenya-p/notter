@@ -48,7 +48,8 @@ export default {
     <AdminLayout :title="item ? item.name : 'Новый пользователь'"
                  :breadcrumb="[{link: route('admin.user.index'), label: 'Пользователи'}, item ? item.name : 'Новый пользователь']">
 
-        <form method="post" @submit.prevent="submit" class="block">
+        <div class="block-wrapper">
+        <form method="post" @submit.prevent="submit" class="block" v-field-container>
             <h2>Основная информация</h2>
             <field :errors="form.errors" for="name" label="Имя">
                 <input class="input" v-model="form.name"/>
@@ -72,13 +73,40 @@ export default {
 
             <div class="block-footer">
                 <button type="submit" class="btn btn-primary">Сохранить</button>
-                <History type="user"/>
+<!--                <History type="user"/>-->
             </div>
 
         </form>
 
 
-        <password v-if="item && item.id == $page.props.auth.user.id" :item="item" style="margin-top: 60px"/>
-
+        <password v-if="item && item.id == $page.props.auth.user.id" :item="item"/>
+        </div>
     </AdminLayout>
 </template>
+
+<style lang="scss" scoped>
+
+@media screen and (min-width: 1600px) {
+    .block-wrapper{
+        gap: 50px;
+        display: flex;
+        width: 100%;
+        align-items: flex-start;
+        &>.block{
+            width: 50%;
+            flex-grow: 1;
+            margin-bottom: 0;
+        }
+    }
+}
+@media screen and (max-width: 1600px) {
+    .block-wrapper{
+        display: flex;
+        flex-direction: column;
+        gap: 40px;
+        &>.block{
+        }
+    }
+}
+</style>
+

@@ -36,7 +36,10 @@ Route::get('/admin', function(){
 Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => 'auth'], function () {
 
 
-    Route::resource('user', \App\Http\Controllers\Admin\UserController::class);
+    Route::resource('user', \App\Http\Controllers\Admin\UserController::class)
+        ->except(['destroy']);
+    Route::resource('content', \App\Http\Controllers\Admin\ContentController::class)
+        ->only(['index', 'edit', 'update']);
 
 });
 

@@ -44,7 +44,7 @@ export default {
 </script>
 
 <template>
-    <form method="post" @submit.prevent="submit"  class="block">
+    <form method="post" @submit.prevent="submit"  class="block" v-field-container>
         <h2>Изменить пароль</h2>
         <field :errors="form.errors" for="old_password" label="Текущий пароль">
             <input type="password" class="input" v-model="form.old_password"/>

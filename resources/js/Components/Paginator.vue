@@ -1,124 +1,117 @@
-<script>
-
-
-
-export default {
-    props: {
-        label: {
-            type: String,
-            default: null,
-        },
-        modelValue: {
-            default: 1
-        },
-        count: {
-            type: Number
-        }
-    },
-    computed: {
-        proxy: {
-            get() {
-                return this.modelValue;
-            },
-            set(val) {
-                this.$emit("update:modelValue", val);
-            },
-        }
-    },
-    methods: {
-      resize(){
-        console.log(this.$refs.container.clientWidth);
-
-      }
-    },
-    mounted() {
-        window.addEventListener('resize', this.resize);
-    },
-    unmounted() {
-        window.removeEventListener('resize', this.resize);
-    }
-
-}
-
-</script>
-
 <template>
-    <div ref="container" class="paginator">
-        <label v-if="label">{{label}}</label>
-        <template  v-for="index in count">
-            <a v-if="index != modelValue" @click="proxy = index">{{index}}</a>
-            <span v-else>{{index}}</span>
+    <div class="pagination" v-if="count != 0">
+        <p class="">Страницы:</p>
+        <template v-for="i in pages">
+            <span v-if="i=='sep'" class="separator">...</span>
+            <span v-else-if="i == current" class="active">{{ i }}</span>
+            <a v-else @click="go(i)">{{ i }}</a>
         </template>
     </div>
 </template>
 
-<style scoped lang="scss">
-
-.paginator{
-    display: flex;
-    gap: 5px;
-    overflow: hidden;
-
-    label{font-size: 16px;font-weight: 600;width: 65px;flex-shrink: 0;flex-grow: 0;}
-    a,
-    span{
-        box-sizing: border-box;
-        line-height: 25px;
-        width: 25px;
-        height: 25px;
-        text-align: center;
-        flex-shrink: 0;
-        flex-grow: 0;
-        padding: 0;
-        margin: 0;
-        border-radius: 8px;
-        font-family: 'Jura', sans-serif, serif;
-    }
-    a{cursor: pointer; transition: filter 200ms ease}
-    a:hover{text-decoration: none; filter: brightness(95%);}
-    .spacer{}
-
-
-    &-gray{
-        label{line-height: 24px}
-        a,
-        span{
-            font-size: 10px;
-            line-height: 22px;
-            width: 24px;
-            height: 24px;
-
-            font-weight: 400;
+<script>
+export default {
+    name: "pagination",
+    data() {
+        return {
+            current: this.modelValue,
         }
-        a{
-
-            color: #999;
-            background: #F1F1F1;
-            border: 2px solid #F1F1F1;
+    },
+    props: {
+        count: {
+            type: Number,
+            required: true
+        },
+        ipp: {
+            type: Number,
+            required: false,
+            default: 10
+        },
+        modelValue: ''
+    },
+    methods: {
+        go(page) {
+            this.current = page;
+            this.$emit('update:modelValue', page);
         }
-        span{
-            color: white;
-            background: #1AB69D;
-            border: 2px solid #1AB69D;
+    },
+    computed: {
+        pageCount() {
+            return Math.ceil(this.count / this.ipp);
+        },
+        pages() {
+            var pages = [];
+            for (var i = 1; i <= this.pageCount; i++) {
+                if (i === 1 || i === this.pageCount || (i > Math.min(this.pageCount - 7, this.current - 3) && i < Math.max(8, this.current + 3))) {
+                    pages.push(i);
+                } else if (i === 2 || (i === this.pageCount - 1 && this.current !== 'all')) {
+                    pages.push('sep');
+                }
+            }
+            return pages;
+        }
+    },
+    watch: {
+        modelValue() {
+            this.current = this.modelValue;
         }
     }
-    &-white{
-        label{line-height: 27px}
-        a,
-        span{
-            font-size: 12px;
-            line-height: 24px;
-            width: 27px;
-            height: 27px;
-        }
-        a{color: #333; border: 1px solid #DADADA; padding: 1px}
-        span{border: 2px solid #1AB69D;}
-    }
-
 }
+</script>
+
+<style lang="scss" scoped>
+.pagination {
+    @import "resources/css/admin-vars";
+
+    width: auto;
+    margin: 0 5px 0 auto;
+    display: flex;
+
+    .separator {
+        font-size: 14px;
+        padding: 0;
+        width: 30px;
+        text-align: center;
+        display: inline-block;
+        color: gray;
+        line-height: 25px;
+        margin-left: 7px;
+    }
+
+    p {
+        font-size: 14px;
+        color: #666666;
+        margin: 0;
+        padding: 0 5px 0 0 ;
+        line-height: 32px;
+    }
+
+    .active,a {
+        font-size: 14px;
+        padding: 0;
+        width: 30px;
+        margin-left: 7px;
+        text-align: center;
+        display: inline-block;
+        box-sizing: border-box;
+        line-height: 30px;
+        border-radius: 7px;
+        height: 30px;
 
 
+    }
 
+    .active {
+        color: white;
+        background: $red;
+        border: 1px solid transparent;
+    }
 
-
+    a {
+        text-decoration: none;
+        color: inherit;
+        cursor: pointer;
+        border: 1px solid $border-color;
+    }
+}
 </style>

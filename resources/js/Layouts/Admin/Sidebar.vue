@@ -6,35 +6,35 @@
 
         <div class="sidebar-menu">
             <ul class="nav">
-                <li class="nav-item active">
-                    <a class="nav-link" href="javascript: ;">
+                <li :class="{active: route().current().startsWith('admin.user.')}">
+                    <Link :href="route('admin.user.index')">
                         <i class="fa fa-users"/>
                         <span>Пользователи</span>
-                    </a>
+                    </Link>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="javascript: ;">
+                <li>
+                    <span href="javascript: ;">
                         <i class="fa fa-list-check"/>
                         <span>Тесты</span>
-                    </a>
+                    </span>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="javascript: ;">
+                <li>
+                    <span href="javascript: ;">
                         <i class="fa-regular fa-folder-open"/>
                         <span>Результаты</span>
-                    </a>
+                    </span>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="javascript: ;">
+                <li>
+                    <span href="javascript: ;">
                         <i class="fa fa-money-check-dollar"></i>
                         <span>Платежи</span>
-                    </a>
+                    </span>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="javascript: ;">
+                <li :class="{active: route().current().startsWith('admin.content.')}">
+                    <Link :href="route('admin.content.index')">
                         <i class="fa fa-file-text"></i>
                         <span>Контент</span>
-                    </a>
+                    </Link>
                 </li>
             </ul>
         </div>

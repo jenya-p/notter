@@ -51,14 +51,14 @@ export default {
 
                     <tbody>
                     <tr>
-                        <td class="font-inter">01/03/2024 16:31</td>
-                        <td>Покупка (Название теста № блока)</td>
-                        <td class="font-inter color-red bold to-right">4 000 ₽</td>
+                        <td class="font-inter"><span class="m-label">Число: </span><span class="nobr">01/03/2024 16:31</span></td>
+                        <td class="m-title">Покупка (Название теста № блока)</td>
+                        <td class="font-inter to-right"><span class="m-label">Сумма: </span><span class="color-red bold">40 000 ₽</span></td>
                     </tr>
                     <tr>
-                        <td class="font-inter">01/03/2024 16:31</td>
-                        <td>Покупка (Название теста № блока)</td>
-                        <td class="font-inter color-red bold to-right">40 000 ₽</td>
+                        <td class="font-inter"><label class="m-label">Число: </label><span class="nobr">01/03/2024 16:31</span></td>
+                        <td class="m-title">Покупка (Название теста № блока) (Название теста № блока) (Название теста № блока) (Название теста № блока) (Название теста № блока) (Название теста № блока)</td>
+                        <td class="font-inter to-right"><span class="m-label">Сумма: </span><span class="color-red bold">4 000 ₽</span></td>
                     </tr>
                     </tbody>
                 </table>
@@ -68,6 +68,6 @@ export default {
     </GuestLayout>
 </template>
 
-<style>
+<style lang="scss" scoped>
 
 </style>
