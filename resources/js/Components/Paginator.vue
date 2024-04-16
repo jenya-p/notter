@@ -97,8 +97,6 @@ export default {
         line-height: 30px;
         border-radius: 7px;
         height: 30px;
-
-
     }
 
     .active {

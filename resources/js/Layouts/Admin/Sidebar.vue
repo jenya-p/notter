@@ -1,8 +1,8 @@
 <template>
     <aside>
-        <div class="logo">
+        <a href="/" class="logo" target="notter-home">
             <img src="/images/logo.svg" alt="">
-        </div>
+        </a>
 
         <div class="sidebar-menu">
             <ul class="nav">
@@ -13,19 +13,19 @@
                     </Link>
                 </li>
                 <li>
-                    <span href="javascript: ;">
+                    <span>
                         <i class="fa fa-list-check"/>
                         <span>Тесты</span>
                     </span>
                 </li>
                 <li>
-                    <span href="javascript: ;">
+                    <span>
                         <i class="fa-regular fa-folder-open"/>
                         <span>Результаты</span>
                     </span>
                 </li>
                 <li>
-                    <span href="javascript: ;">
+                    <span>
                         <i class="fa fa-money-check-dollar"></i>
                         <span>Платежи</span>
                     </span>
@@ -43,7 +43,7 @@
             <span class="username">{{ $page.props.auth.user.display_name }}</span>
             <div class="actions">
                 <Link :href="route('admin.user.edit', {user: $page.props.auth.user.id})" class="logout">Профиль</Link>
-                <Link :href="route('logout')" class="btn-a logout" method="post" as="button">Выход</Link>
+                <Link :href="route('logout')" class="btn-a logout" method="get">Выход</Link>
             </div>
         </div>
 

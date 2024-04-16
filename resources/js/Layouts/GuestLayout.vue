@@ -44,9 +44,9 @@ export default {
                 </Link>
 
                 <ul class="sidebar-menu">
-                    <li><a href="">Тесты</a></li>
-                    <li><a href="">Цены</a></li>
-                    <li><a href="">О нас</a></li>
+                    <li><a href="/profile/test">Тесты</a></li>
+                    <li><a href="/prices">Цены</a></li>
+                    <li><a href="/about">О нас</a></li>
                 </ul>
             </div>
             <header>
@@ -54,7 +54,7 @@ export default {
                     <Link href="/"><img src="/images/logo.svg" class="header-logo" alt="" /></Link>
                 </div>
                 <ul class="header-menu">
-                    <li><Link href="/tests">Тесты</Link></li>
+                    <li><Link href="/profile/test">Тесты</Link></li>
                     <li><Link href="/prices">Цены</Link></li>
                     <li><Link href="/about">О нас</Link></li>
                 </ul>
@@ -80,7 +80,8 @@ export default {
             <li><Link href="/about">О сервисе</Link></li>
             <li><Link href="">Обратная связь</Link></li>
             <li><Link href="/agreement">Соглашение</Link></li>
-            <li v-if="$page.props.auth.user"><Link :href="route('logout')" method="POST">Выйти</Link></li>
+            <li v-if="$page.props.auth.user && $page.props.auth.user.is_admin"><a href="/admin" target="_blank">Админка</a></li>
+            <li v-if="$page.props.auth.user"><Link :href="route('logout')" method="get">Выйти</Link></li>
         </ul>
     </footer>
 </template>

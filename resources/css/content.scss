@@ -18,3 +18,8 @@ ul li:before{
     position: absolute;
     line-height: 22px;
 }
+details{
+    summary{
+        margin-bottom: 8px;
+    }
+}

@@ -27,7 +27,14 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [InfoController::class, 'destroy'])->name('profile.destroy');
 
     Route::get('/tests', [\App\Http\Controllers\HomeController::class, 'tests'])->name('tests');
-    Route::get('/test', [\App\Http\Controllers\HomeController::class, 'test'])->name('test');
+    Route::get('/test/{test}/summary', [\App\Http\Controllers\TestsController::class, 'summary'])->name('test.summary');
+    Route::get('/test/{test}/{ticketIndex?}/{questionIndex?}', [\App\Http\Controllers\TestsController::class, 'test'])->name('test');
+    Route::post('/test/{test}/{variant}', [\App\Http\Controllers\TestsController::class, 'answer'])->name('answer.store');
+    Route::delete('/test/{test}/{question}', [\App\Http\Controllers\TestsController::class, 'answerDelete'])->name('answer.delete');
+
+
+    Route::get('/purchase', [\App\Http\Controllers\PurchaseController::class, 'create'])->name('purchase.create');
+    Route::post('/purchase', [\App\Http\Controllers\PurchaseController::class, 'store'])->name('purchase.store');
 
 });
 Route::get('/admin', function(){

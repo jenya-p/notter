@@ -3,32 +3,30 @@
         <div class="block">
             <h1>Подготовка к экзамену на адвоката</h1>
 
-            <div class="item">
+            <div class="item" v-for="item in blocks">
                 <div class="item-left">
-                    <h3>Тест на статус адвоката 2024 в последней редакции (60 билетов по 20 вопросов)</h3>
-                    <p>Вопросы теста идентичны реальному тесту на адвоката 2024. 359 вопросов адвокатского теста с
-                        ответами по новой программе</p>
-                    <a href="" class="link-more">Подробнее</a>
+                    <checkbox v-model="selected" :value="item.id"><h3>{{ item.title }}</h3></checkbox>
+                    <div v-html="item.description" class="content"></div>
                 </div>
                 <div class="item-right">
-                    <div class="price">{{ currency(40000, 'auto') }} руб.</div>
+                    <div class="price">{{ $filters.currency(item.price, 'auto') }} руб.</div>
                     <p class="price-description">доступ на 1 месяц со дня покупки</p>
-                    <a href="" class="btn btn-sm btn-green-dark btn-buy">Купить</a>
+                    <a @click="submit([item.id])" class="btn btn-sm btn-green-dark btn-buy">Купить</a>
                 </div>
             </div>
 
-
-            <div class="item">
+            <div class="item item-total" v-if="selected.length > 0">
                 <div class="item-left">
-                    <h3>Список вопросов выносимый на зачет</h3>
-                    <p>Вопросы теста идентичны реальному тесту на адвоката 2024. 359 вопросов адвокатского теста с
-                        ответами по новой программе</p>
-                    <a href="" class="link-more">Подробнее</a>
+                    <h3>{{ $filters.plural(selected.length, 'Выбран', 'Выбрано', 'Выбрано') }} {{ selected.length }}
+                        {{ $filters.plural(selected.length, 'блок', 'блока', 'блоков') }}:</h3>
+                    <ul class="description">
+                        <li v-for="item in selectedItems">{{ item.title }}</li>
+                    </ul>
                 </div>
                 <div class="item-right">
-                    <div class="price">{{ currency(4000, 'auto') }} руб.</div>
+                    <div class="price">{{ $filters.currency(totalPrice, 'auto') }} руб.</div>
                     <p class="price-description">доступ на 1 месяц со дня покупки</p>
-                    <a href="" class="btn btn-sm btn-green-dark btn-buy">Купить</a>
+                    <a @click="submit(selected)" class="btn btn-sm btn-green-dark btn-buy">Оплатить все</a>
                 </div>
             </div>
 
@@ -37,9 +35,42 @@
     </GuestLayout>
 </template>
 
-<script setup>
+<script>
 import GuestLayout from "@/Layouts/GuestLayout.vue";
-import currency from "@/Filters/currency.js";
+import Checkbox from "@/Components/Checkbox.vue";
+import {router} from "@inertiajs/vue3";
+
+export default {
+    components: {GuestLayout, Checkbox},
+    props: {
+        blocks: {type: Array}
+    },
+    data() {
+        return {
+            selected: []
+        }
+    },
+    computed: {
+        selectedItems() {
+            let $v = this;
+            return this.blocks.filter(itm => $v.selected.indexOf(itm.id) !== -1);
+        },
+        totalPrice() {
+            let t = 0;
+
+            for (const itm of this.selectedItems) {
+                t += itm.price;
+            }
+            return t;
+        }
+    },
+    methods: {
+        submit(ids){
+            router.get(route('purchase.create'), {ids: ids});
+        }
+    }
+
+}
 
 </script>
 
@@ -53,8 +84,6 @@ import currency from "@/Filters/currency.js";
         padding-left: 30px;
         padding-right: 30px;
     }
-
-
 }
 
 h1 {
@@ -76,6 +105,8 @@ h1 {
     &-left {
         background: #F9F9F9;
         padding: 20px;
+        flex-grow: 1;
+
         h3 {
             margin-bottom: 0.65em;
         }
@@ -96,8 +127,11 @@ h1 {
     &-right {
         background: #1AB69D;
         color: white;
+
         @media screen and (min-width: 700px) {
-            width: 58%;
+            flex-grow: 0;
+            flex-shrink: 0;
+            width: 230px;
         }
 
         text-align: center;
@@ -124,7 +158,17 @@ h1 {
 
     }
 
+    &.item-total {
+        margin-top: 45px;
+
+        ul.description {
+            list-style: auto;
+            margin-left: 15px;
+        }
+
+    }
 
 }
+
 
 </style>

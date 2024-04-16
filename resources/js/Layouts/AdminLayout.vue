@@ -14,12 +14,8 @@ export default {
 <template>
     <div class="lay-wrapper">
         <Head :title="title" />
-
         <Sidebar />
-
         <main>
-
-
             <h1 class="page-title">{{title}}</h1>
             <div class="breadcrumb-wrapper">
                 <ol class="breadcrumb" style="background: transparent"  v-if="breadcrumb && breadcrumb.length > 1">
@@ -32,7 +28,6 @@ export default {
                 </ol>
             </div>
             <div :class="wrapperClass">
-
                 <slot />
             </div>
         </main>

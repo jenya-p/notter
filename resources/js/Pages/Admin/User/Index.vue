@@ -44,7 +44,7 @@
                     </td>
                     <td>
                         {{
-                            date_format(item.created_at)
+                            $filters.date(item.created_at)
                         }}
                     </td>
                     <td class="td-actions text-right">
@@ -69,7 +69,6 @@
 <script>
 import AdminLayout from "@/Layouts/AdminLayout.vue";
 import {Link} from "@inertiajs/vue3";
-import date_format from "@/Filters/date_format";
 import Paginator from "@/Components/Paginator.vue";
 import Sort from "@/Components/Sort.vue";
 import _debounce from "lodash/debounce";
@@ -124,8 +123,7 @@ export default {
                     sort: sort
                 }
             });
-        }),
-        date_format: date_format
+        })
     },
     watch: {
         page(){

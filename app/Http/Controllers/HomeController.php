@@ -2,9 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
-use App\Models\Content;
-use Illuminate\Http\Request;
+use App\Models\Block;
 use Inertia\Inertia;
 
 class HomeController extends Controller {
@@ -27,21 +25,19 @@ class HomeController extends Controller {
 
     public function prices() {
 
-        return Inertia::render('Public/Prices', []);
+        return Inertia::render('Public/Prices', [
+            'blocks' => Block::active()->get()
+        ]);
 
     }
 
 
     public function tests() {
         return Inertia::render('Public/Tests', []);
-
     }
 
 
-    public function test() {
 
-        return Inertia::render('Public/Test', []);
 
-    }
 
 }

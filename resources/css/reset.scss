@@ -32,5 +32,7 @@ mark{color:inherit;}
 .clr-after:AFTER, .clear-after:AFTER {content:'';display:block;clear:both;}
 .hidden{display: none;}
 .nobr {white-space: nowrap;}
-a {text-decoration:none;color: #03369A;}
-a:hover {text-decoration:underline;}
+summary, a {text-decoration:none;color: #03369A;cursor: pointer}
+summary:hover, a:hover {text-decoration:underline;cursor: pointer}
+details>summary::marker{content: '';}
+

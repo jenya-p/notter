@@ -33,12 +33,6 @@
 <script>
 import AdminLayout from "@/Layouts/AdminLayout.vue";
 import {Link} from "@inertiajs/vue3";
-import date_format from "@/Filters/date_format";
-import Paginator from "@/Components/Paginator.vue";
-import Sort from "@/Components/Sort.vue";
-import _debounce from "lodash/debounce";
-import _isArray from "lodash/isArray";
-import TableBottom from "@/Components/TableBottom.vue";
 import {SimpleList} from "@/Components/SimpleList";
 
 
