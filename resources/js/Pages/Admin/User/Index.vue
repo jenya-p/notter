@@ -53,10 +53,8 @@
                 </tbody>
             </table>
 
-
-
             <table-bottom>
-                <paginator :count="items.total" v-model="page" :ipp="items.per_page"></paginator>
+                <paginator :item-count="items.total" v-model="page" :ipp="items.per_page"></paginator>
             </table-bottom>
 
         </div>

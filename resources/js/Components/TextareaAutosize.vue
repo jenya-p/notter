@@ -7,6 +7,19 @@
 </template>
 
 <script>
+import _throttle from "lodash/throttle";
+
+if (!window.hasOwnProperty('__textareautosize')) {
+    window.__textareautosize = _throttle(function () {
+        for (const textarea of document.querySelectorAll('textarea.autosize')) {
+            if (textarea.__vnode) {
+                textarea.__vnode.ctx.ctx.resize();
+            }
+        }
+    }, 200);
+    window.addEventListener('resize', window.__textareautosize);
+}
+
 export default {
     name: "TextareaAutosize",
     emits: ['update:modelValue'],
@@ -16,25 +29,26 @@ export default {
             type: String
         }
     },
-    setup(props, {emit}) {
-        function handleInput (event) {
-            const textarea = event.target
-            emitInput(textarea)
-            resize(textarea)
-        }
-        const emitInput = textarea => emit('update:modelValue', textarea.value)
-
-        const resize = textarea => {
-            textarea.style.height = 'auto'
-            textarea.style.height = `${textarea.scrollHeight + 2}px`
-        }
-        return {
-            handleInput,
+    methods: {
+        handleInput(event) {
+            this.resize();
+            this.$emit('update:modelValue', this.$el.value);
+        },
+        resize() {
+            this.$el.style.height = 'auto'
+            this.$el.style.height = `${this.$el.scrollHeight + 3}px`
         }
     },
     mounted() {
-        this.$el.style.height = `${this.$el.scrollHeight + 2}px`
+        let $el = this.$el;
+        setTimeout(function(){
+            $el.style.height = 'auto'
+            $el.style.height = `${$el.scrollHeight + 3}px`
+        },50);
+
     }
 }
+
+
 </script>
 

@@ -2,36 +2,22 @@
     <GuestLayout wrapper-class="profile-page" :title="test.title">
         <h1 class="d-only">{{ test.title }}</h1>
         <div class="block block-1">
+
             <h1 class="m-only">{{ test.title }}</h1>
-            <NumberLine v-model="ticketIndex" :options="tickets" class="number-line--gray" label="Билет"
+            <NumberLine v-model="ticketIndex" :count="tickets.length" class="number-line--gray" label="Билет"
                         :item-class="ticketClasses"/>
         </div>
-        <div class="block block-2">
-            <NumberLine v-model="questionIndex" :options="questions" class="number-line--white" label="Вопрос"
-                        :item-class="questionClasses"/>
 
-            <div class="block-bordered">
-                <div class="question">
-                    {{ question.text }}
-                </div>
-
-                <div class="variants">
-                    <div class="variant-wrapper" :class="{active: question.answer == variant.id}"
-                         v-for="variant of question.variants">
-                        <Radio v-model="question.answer" :value="'' + variant.id">{{ variant.text }}</Radio>
-                    </div>
-                </div>
-            </div>
-
-            <div class="buttons">
-                <button class="btn btn-green btn-next" @click.prevent="confirm" :disabled="question.answer == null">
-                    Следующий
-                </button>
-                <a class="btn btn-white btn-skip" @click.prevent="skip">Пропустить</a>
-                <a class="btn btn-white btn-skip" @click.prevent="complete">Завершить</a>
-            </div>
-
+        <div v-if="ticket.unavailable == true"  class="block block-2">
+            <h3 class="unavailable-message">Тестирование недоступно</h3>
         </div>
+        <Solve v-else-if="ticket.completed_at == null "
+               :ticket="ticket"
+               @complete="complete"
+               ref="solve"
+        />
+        <Summary v-else :ticket="ticket"/>
+
     </GuestLayout>
 </template>
 
@@ -41,81 +27,35 @@ import Radio from "@/Components/Radio.vue";
 import {ref} from "vue";
 import NumberLine from "@/Components/NumberLine.vue";
 import {router} from "@inertiajs/vue3";
+import Solve from "@/Pages/Public/Solve.vue";
+import Summary from "@/Pages/Public/Summary.vue";
 
 export default {
-    components: {NumberLine, Radio, GuestLayout},
+    components: {Summary, Solve, NumberLine, Radio, GuestLayout},
     props: [
         'test'
     ],
     data() {
         return {
-            ticketIndex: this.$attrs.ticketIndex,
-            questionIndex: this.$attrs.questionIndex,
+            ticketIndex: 1
         }
     },
     methods: {
-
-        async confirm() {
-            if (this.question.answer === null) {
-                alert('Выберете вариант ответа');
-                return;
-            }
-            let result = await axios.post(route('answer.store', {test: this.test.id, variant: this.question.answer}));
+        async complete() {
+            let result = await axios.get(route('test.complete', {ticket: this.ticket.id}));
             if (result.data.result == 'ok') {
-                this.question.answer = result.data.answer;
-                this.next();
+                this.test.tickets[this.ticketIndex - 1] = result.data.ticket;
             } else {
                 alert('Что-то пошло не так. Обновите страницу, пожалуйста, или обратитесь к администратору');
             }
         },
 
-        async skip() {
-            if (this.question.answer === null) {
-                this.next();
-            } else {
-                let result = await axios.delete(route('answer.delete', {test: this.test.id, question: this.question.id}));
-                if (result.data.result == 'ok') {
-                    this.question.answer = null;
-                    this.next();
-                } else {
-                    alert('Что-то пошло не так. Обновите страницу, пожалуйста, или обратитесь к администратору');
-                }
+        ticketClasses(index) {
+            if (this.tickets[index - 1].result == 'passed') {
+                return 'green';
+            } else if (this.tickets[index - 1].result == 'failed') {
+                return 'red';
             }
-        },
-
-        async next() {
-            if (this.questionIndex === this.questions.length) {
-                this.questionIndex = 1;
-                if (this.ticketIndex === this.tickets.length) {
-                    this.complete();
-                    return;
-                } else {
-                    this.ticketIndex++;
-                }
-            } else {
-                this.questionIndex++;
-            }
-            let $v = this;
-            this.$nextTick(function () {
-                history.replaceState({}, '', route('test', {
-                    test: $v.test.id,
-                    ticketIndex: $v.ticketIndex,
-                    questionIndex: $v.questionIndex
-                }));
-            });
-        },
-
-        complete(){
-            if (confirm('Завершить выполнение теста и перейти к результатам?')) {
-                router.visit(route('test.summary', {test: this.test.id}));
-            }
-        },
-
-        ticketClasses(ticket) {
-            return {green: ticket.passed};
-        },
-        questionClasses(question) {
-            return {green: question.answer !== null};
         }
 
     },
@@ -127,28 +67,27 @@ export default {
                     this.tickets[old - 1].passed = false;
                 }
             }
-            this.questionIndex = 1;
-            for (const index in this.test.block.tickets[this.ticketIndex - 1].questions) {
-                if (this.questions[index].answer == null) {
-                    this.questionIndex = parseInt(index) + 1;
-                    return;
-                }
-            }
-        },
+        }
     },
     computed: {
         tickets() {
-            return this.test.block.tickets;
+            return this.test.tickets;
         },
         ticket() {
             return this.tickets[this.ticketIndex - 1];
-        },
-        questions() {
-            return this.ticket.questions;
-        },
-        question() {
-            return this.questions[this.questionIndex - 1];
-        },
+        }
+    },
+    created() {
+        this.ticketIndex = parseInt(this.$attrs.ticketIndex);
+        this.$nextTick(function(){
+            if(this.ticket.completed_at == null ){
+                let index = parseInt(this.$attrs.questionIndex);
+                if(index > 0 && index <= this.ticket.questions.length){
+                    this.$refs.solve.index = index;
+                }
+            }
+        });
+
     }
 }
 
@@ -194,115 +133,76 @@ h1 {
         border-top: none;
         box-shadow: none;
     }
-
+    .unavailable-message{
+        // color: $red;
+        text-align: center;
+        margin-bottom: 25px;
+    }
 }
 
-.number-line--gray, .number-line--white {
-    padding: 5px;
-
-}
-
-.number-line--white {
-    margin-bottom: 25px;
-}
 
 ::v-deep(.number-line--gray) {
-    a.red {
-        background: $red;
-        color: white;
-        border-color: $red;
-    }
+    .number-line-inner {
 
-    a.green {
-        background: $green;
-        color: white;
-        border-color: $green;
-    }
-}
+        a {
+            color: #999;
 
-::v-deep(.number-line--white) {
-    a.red {
-        background: $red;
-        color: white;
-        border-color: $red;
-    }
-
-    a.green {
-        background: $green;
-        color: white;
-        border-color: $green;
-    }
-}
-
-.block-bordered {
-    padding: 17px 25px;
-    min-height: 358px;
-    box-sizing: border-box;
-    margin-bottom: 82px;
-
-    @media screen and (max-width: 500px) {
-        padding-left: 10px;
-        padding-right: 10px;
-        margin-bottom: 30px;
-    }
-
-    .question {
-        font-size: 20px;
-        font-weight: 600;
-        line-height: 1.2em;
-        margin-bottom: 10px;
-    }
-
-    .variants {
-        display: flex;
-        flex-direction: column;
-        gap: 11px;
-
-        .variant-wrapper {
-            padding: 10px;
-            border-radius: 10px;
-            @media screen and (max-width: 500px) {
-                margin-left: -10px;
-                margin-right: -10px;
-                border-radius: 0;
+            &.red {
+                background: $red;
+                color: white;
+                border-color: $red;
             }
 
+            &.green {
+                background: $green;
+                color: white;
+                border-color: $green;
+            }
+        }
 
-            &.active {
-                background: #F1F1F1;
+        span {
+            background: white;
+            color: black;
+
+            &.red {
+                border-color: $red;
+            }
+
+            &.green {
+                border-color: $green;
             }
         }
 
     }
+
 }
 
-.buttons {
-    display: flex;
-    gap: 15px;
+::v-deep(.number-line--white) {
+    margin-bottom: 25px;
 
+    .number-line-inner {
+        a {
+            color: #333;
+            border: 1px solid #f1f1f1;
+            padding: 1px;
+            background: #f1f1f1;
 
-    .btn-next {
-        width: unset;
-        flex-grow: 1;
-    }
+            &.green {
+                background: $green;
+                border-color: $green;
+                color: white;
+            }
+        }
 
-    .btn-skip {
-        // width: 180px;
-        width: 130px;
+        span {
+            border: 2px solid #DADADA;
+            background: white;
+            color: black;
+            padding: 0px;
 
-        //line-height: inherit;
-        padding-left: 0;
-        padding-right: 0;
-    }
-
-
-    @media screen and (max-width: 500px) {
-        flex-direction: column;
-        align-items: center;
-        gap: 0;
-        width: 100%;
-        .btn-next {
-            width: 100%;
+            &.green {
+                border-color: $green;
+            }
         }
     }
 }

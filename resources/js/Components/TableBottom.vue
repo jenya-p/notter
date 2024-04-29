@@ -1,6 +1,6 @@
 <template>
     <div class="table-bottom-margin fixed" ref="margin"/>
-    <div class="table-bottom-info fixed" ref="panel">
+    <div class="table-bottom-info fixed" :class="cls()" ref="panel">
         <slot/>
     </div>
 </template>
@@ -9,6 +9,9 @@
 let p = false;
 export default {
     name: 'table-bottom',
+    props: [
+        'align',
+    ],
     methods: {
         refresh() {
             if (this.$refs.margin.offsetTop > window.scrollY + window.innerHeight - this.$refs.panel.clientHeight) {
@@ -23,6 +26,15 @@ export default {
                     this.$refs.margin.classList.remove('fixed');
                     this.$refs.panel.classList.remove('fixed');
                 }
+            }
+        },
+        cls(){
+            if(this.align === 'left'){
+                return 'table-bottom-info--left';
+            } else if(this.align === 'center'){
+                return 'table-bottom-info--center';
+            } else {
+                return 'table-bottom-info--right';
             }
         }
     },
@@ -50,8 +62,8 @@ export default {
 
 .table-bottom-info {
     display: flex;
+    gap: 1em;
     flex-direction: row;
-    justify-content: right;
     padding: 20px 0;
     height: 40px;
     align-items: center;
@@ -77,6 +89,16 @@ export default {
         box-shadow: 0px -18px 16px -15px rgba(0, 0, 0, 0.0705882353);
 
     }
-
+}
+</style>
+<style lang="scss">
+.table-bottom-info--left{
+    justify-content: left;
+}
+.table-bottom-info--right{
+    justify-content: right;
+}
+.table-bottom-info--center{
+    justify-content: center;
 }
 </style>

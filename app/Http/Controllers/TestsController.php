@@ -2,24 +2,25 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Question;
-use App\Models\Answer;
-use App\Models\Test;
-use App\Models\Variant;
+use App\Models\Quiz\Variant;
+use App\Models\Test\Question;
+use App\Models\Test\Test;
+use App\Models\Test\Ticket;
+use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 use Inertia\Inertia;
 
 class TestsController extends Controller {
     public function test(Test $test, $ticketIndex = null, $questionIndex = null) {
 
-        if(!$test->isAvailable()){
+        if ($test->user_id !== \Auth::id()) {
             return abort(403, 'Not Available');
         }
 
-        if($test->block->is_plain_text){
+        if ($test->block->is_plain_text) {
             $test->load(
                 'block:id,title',
-                'block.tickets:id,block_id,order',
-                'block.tickets.questions:id,ticket_id,text,description',
+                'block.questions:id,ticket,order,text,description',
             );
 
             return Inertia::render('Public/PlainTextTest', [
@@ -27,141 +28,141 @@ class TestsController extends Controller {
             ]);
         }
 
-        if(!empty($test->completed_at)){
-            return redirect()->route('test.summary', ['test' => $test]);
-        }
-
-        if ($ticketIndex == null) {
-            return redirect()->route('test', [
-                'test' => $test->id,
-                'ticketIndex' => 1,
-                'questionIndex' => 1,
-            ]);
-        } else if ($questionIndex == null) {
-            return redirect()->route('test', [
-                'test' => $test->id,
-                'ticketIndex' => $ticketIndex,
-                'questionIndex' => 1,
-            ]);
-        }
-
-        $test->load(
-            'block:id,title',
-            'block.tickets:id,block_id,order',
-            'block.tickets.questions:id,ticket_id,text',
-            'block.tickets.questions.variants:id,question_id,text',
-        );
-
-        $answers = $test->answers;
-        $passed = [];
-        foreach ($answers as $answer) {
-            $passed[$answer->variant->question_id] = $answer->variant_id;
-        }
-        foreach ($test->block->tickets as $ticket) {
-            $ticket->passed = true;
+        $redirectToUnresolvedQuestion = function ($ticket = null) use ($test) {
+            if ($ticket === null) {
+                $ticket = $test->tickets[0];
+                foreach ($test->tickets as $tkt) {
+                    if (empty($tkt->completed_at)) {
+                        $ticket = $tkt;
+                        break;
+                    }
+                }
+            }
 
             foreach ($ticket->questions as $question) {
-                if (array_key_exists($question->id, $passed)) {
-                    $question->passed = true;
-                    $question->answer = $passed[$question->id];
+                if ($question->answer === null) {
+                    return redirect()->route('test', [
+                        'test' => $test->id,
+                        'ticketIndex' => $ticket->order,
+                        'questionIndex' => $question->order,
+                    ]);
+                }
+            }
+            return redirect()->route('test', [
+                'test' => $test->id,
+                'ticketIndex' => $ticket->order,
+                'questionIndex' => 1,
+            ]);
+        };
+        $redirectToSummary = function ($ticket = null) use ($test) {
+            return redirect()->route('test', [
+                'test' => $test->id,
+                'ticketIndex' => empty($ticket) ? 1 : $ticket->order,
+                'questionIndex' => 'summary',
+            ]);
+        };
+
+        if ($ticketIndex == null) {
+            if ($test->status !== Test::STATUS_ACTIVE) {
+                return $redirectToSummary();
+            } else {
+                return $redirectToUnresolvedQuestion();
+            }
+        } else {
+            if ($ticketIndex <= 0 || $ticketIndex > count($test->tickets)) {
+                return abort(404, 'Ticket not found');
+            }
+            $ticket = $test->tickets[$ticketIndex - 1];
+            if ($questionIndex == null) {
+                if ($test->status === Test::STATUS_ACTIVE && $ticket->completed_at == null) {
+                    return $redirectToUnresolvedQuestion($ticket);
                 } else {
-                    $ticket->passed = false;
-                    $question->answer = null;
+                    return $redirectToSummary($ticket);
+                }
+            } else {
+                if ($questionIndex !== 'summary' && ($questionIndex <= 0 || $questionIndex > count($test->tickets[$ticketIndex - 1]->questions))) {
+                    return abort(404, 'Question not found');
+                }
+
+                if ($questionIndex === 'summary' && $ticket->completed_at === null && $test->status === Test::STATUS_ACTIVE) {
+                    return $redirectToUnresolvedQuestion($ticket);
+                } else if (is_numeric($questionIndex) && $ticket->completed_at !== null) {
+                    return $redirectToSummary($ticket);
                 }
             }
         }
 
-        if ($ticketIndex <= 0 || $ticketIndex > count($test->block->tickets)) {
-            return abort(404, 'Ticket not found');
-        }
+        $test->load(
+            'tickets:id,test_id,order,completed_at'
+        );
 
-        if ($questionIndex <= 0 || $questionIndex > count($test->block->tickets[$ticketIndex - 1]->questions)) {
-            return abort(404, 'Question not found');
+        foreach ($test->tickets as $ticket) {
+            $ticket->loadInfo($test->status == Test::STATUS_ACTIVE);
         }
 
         return Inertia::render('Public/Test', [
-            'ticketIndex' => intval($ticketIndex),
-            'questionIndex' => intval($questionIndex),
+            'ticketIndex' => $ticketIndex,
+            'questionIndex' => $questionIndex,
             'test' => $test,
         ]);
 
     }
 
-    public function answer(Test $test, Variant $variant) {
+    public function answer(Question $question, Request $request) {
 
-        if(!$test->isAvailable()){
-            return abort(403, 'Not Available');
-        }
-        if(!empty($test->completed_at)){
+        if (!$question->isAvailable()) {
             return abort(403, 'Not Available');
         }
 
-        if ($variant->is_right) {
-            $rightVariantText = $variant->text;
-        } else {
-            /** @var Variant $rightVariant */
-            $rightVariant = $variant->question->variants()->where('is_right', '=', '1')->first();
-            if (!empty($rightVariant)) {
-                $rightVariantText = $rightVariant->text;
-            } else {
-                $rightVariantText = '';
-            }
-        }
-
-
-        $answer = Answer::updateOrCreate([
-            'test_id' => $test->id,
-            'question_id' => $variant->question_id
-        ],[
-            'variant_id' => $variant->id,
-            'question_index' => $variant->question->order,
-            'ticket_index' => $variant->question->ticket->order,
-            'question_text' => $variant->question->text,
-            'answer_text' => $variant->text,
-            'is_right' =>   $variant->is_right,
-            'right_answer_text' => $rightVariantText,
-            'question_description' => $variant->question->description,
+        $request->validate([
+            'answer' => 'required|integer|min:0|max:' . count($question->options)
         ]);
 
-        $answer->test->updateCounters();
+        $question->update([
+            'answer' => intval($request->answer),
+            'solvede_at' => now()
+        ]);
 
-        return ['result' => 'ok', 'answer' => $variant->id];
-    }
-
-
-    public function answerDelete(Test $test, Answer $question) {
-
-        if(!$test->isAvailable()){
-            return abort(403, 'Not Available');
-        }
-        if(!empty($test->completed_at)){
-            return abort(403, 'Not Available');
-        }
-
-        $answer = $test->answers()->where('question_id', '=', $question->id)->first();
-        if($answer){
-            $answer->delete();
-        }
-
-        $test->updateCounters();
+        $question->ticket->test->updateCounters();
 
         return ['result' => 'ok'];
     }
 
-    public function summary(Test $test){
-        if($test->user_id !== \Auth::id()){
+    public function skip(Question $question) {
+
+        if (!$question->isAvailable()) {
             return abort(403, 'Not Available');
         }
 
-        if(empty($test->completed_at)){
-            $test->completed_at = now();
-            $test->save();
+        $question->update(['answer' => null,
+            'solved_at' => null]);
+
+        if (empty($question->ticket->started_at)) {
+            $question->ticket->started_at = now();
         }
 
-        $test->load('answers');
+        $question->ticket->test->updateCounters();
 
-        return Inertia::render('Public/Summary', ['test' => $test]);
+        return ['result' => 'ok'];
+    }
+
+    public function complete(Ticket $ticket = null) {
+        if (!$ticket->isAvailable()) {
+            return abort(403, 'Not Available');
+        }
+        $ticket->update(['completed_at' => now()]);
+        $ticket->loadInfo();
+
+        if($ticket->test->tickets()->whereNull('completed_at')->count() == 0){
+            $ticket->test->update(['completed_at' => now()]);
+        }
+
+        return [
+            'result' => 'ok',
+            'ticket' => $ticket
+        ];
 
     }
+
 
 }

@@ -3,65 +3,78 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\Block;
+use App\Http\Requests\BlockRequest;
+use App\Models\Quiz\Block;
+use App\Models\Quiz\Question;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
-class BlockController extends Controller
-{
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
-    {
-        return Inertia::render('Admin/Content/Index', ['items' => Block::all()]);
+class BlockController extends Controller {
+
+    public function index() {
+        return Inertia::render('Admin/Block/Index', [
+            'items' => Block::all()->append(['ticket_count', 'question_count'])
+        ]);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
+
+    public function create() {
+         return Inertia::render('Admin/Block/Edit', ['item' => new Block()]);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
+
+    public function store(BlockRequest $request) {
+        $block = Block::create($request->validated());
+        return \Redirect::route('admin.block.index');
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(Block $block)
-    {
-        //
+    public function edit(Block $block) {
+        $block->load('questions');
+        return Inertia::render('Admin/Block/Edit', [
+            'item' => $block->append('ticket_count'),
+        ]);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Block $block)
-    {
-        //
+
+    public function update(BlockRequest $request, Block $block) {
+        $block->update($request->validated());
+
+        if($block->is_plain_text){
+            request()->validate([
+               'questions' => 'required|array',
+               'questions.*' => 'required|array',
+               'questions.*.text' => 'required|string',
+               'questions.*.id' => 'nullable|integer|exists:quiz_questions,id',
+            ]);
+
+            $ids = [];
+            foreach (request('questions') as $index => $item){
+                if(!empty($item['id'])){
+                    $question = $block->questions()->findOrFail($item['id']);
+                    $question->update([
+                        'text' => $item['text'],
+                        'order' => $index + 1
+                    ]);
+                } else {
+                    $question = $block->questions()->create([
+                        'ticket' => null,
+                        'text' =>  $item['text'],
+                        'order' => $index + 1,
+                    ]);
+                }
+                $ids[] = $question->id;
+            }
+
+            $block->questions()->whereNotIn('id', $ids)->delete();
+
+        }
+
+        return \Redirect::route('admin.block.index');
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, Block $block)
-    {
-        //
-    }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Block $block)
-    {
-        //
+    public function destroy(Block $block) {
+        $block->delete();
+        return ['result' => 'ok'];
     }
 }

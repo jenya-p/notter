@@ -11,6 +11,8 @@ import plural from "@/Filters/plural.js";
 import htmlize from "@/Filters/htmlize.js";
 import date from "@/Filters/date";
 import phone from "@/Filters/phone";
+import {tabs, tab} from '@/Components/tabs.js';
+import "vue-multiselect/dist/vue-multiselect.css";
 
 const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
 
@@ -22,6 +24,9 @@ createInertiaApp({
         app.config.globalProperties.$filters = {currency: currency, plural: plural, htmlize: htmlize, date: date, phone: phone};
         app.use(plugin)
             .use(ZiggyVue)
+            .directive("field-container", fieldContainer)
+            .component('tabs', tabs)
+            .component('tab', tab)
             .mount(el);
         return app;
     },

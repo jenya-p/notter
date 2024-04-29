@@ -6,17 +6,17 @@
 
         <div class="sidebar-menu">
             <ul class="nav">
-                <li :class="{active: route().current().startsWith('admin.user.')}">
+                <li :class="{active: routeIs('user')}">
                     <Link :href="route('admin.user.index')">
                         <i class="fa fa-users"/>
                         <span>Пользователи</span>
                     </Link>
                 </li>
-                <li>
-                    <span>
+                <li :class="{active: routeIs('block', 'question')}">
+                    <Link :href="route('admin.block.index')">
                         <i class="fa fa-list-check"/>
                         <span>Тесты</span>
-                    </span>
+                    </Link>
                 </li>
                 <li>
                     <span>
@@ -30,7 +30,7 @@
                         <span>Платежи</span>
                     </span>
                 </li>
-                <li :class="{active: route().current().startsWith('admin.content.')}">
+                <li :class="{active: routeIs('content')}">
                     <Link :href="route('admin.content.index')">
                         <i class="fa fa-file-text"></i>
                         <span>Контент</span>
@@ -69,6 +69,14 @@ export default {
             } else {
                 this.curSection = section;
             }
+        },
+        routeIs(...args){
+            for (const arg of args) {
+                if(route().current().startsWith('admin.' + arg + '.')){
+                    return true;
+                }
+            }
+            return false;
         }
     }
 }

@@ -27,10 +27,10 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [InfoController::class, 'destroy'])->name('profile.destroy');
 
     Route::get('/tests', [\App\Http\Controllers\HomeController::class, 'tests'])->name('tests');
-    Route::get('/test/{test}/summary', [\App\Http\Controllers\TestsController::class, 'summary'])->name('test.summary');
+    Route::get('/test/{ticket}/complete', [\App\Http\Controllers\TestsController::class, 'complete'])->name('test.complete');
     Route::get('/test/{test}/{ticketIndex?}/{questionIndex?}', [\App\Http\Controllers\TestsController::class, 'test'])->name('test');
-    Route::post('/test/{test}/{variant}', [\App\Http\Controllers\TestsController::class, 'answer'])->name('answer.store');
-    Route::delete('/test/{test}/{question}', [\App\Http\Controllers\TestsController::class, 'answerDelete'])->name('answer.delete');
+    Route::post('/test/{question}', [\App\Http\Controllers\TestsController::class, 'answer'])->name('test.answer');
+    Route::delete('/test/{question}', [\App\Http\Controllers\TestsController::class, 'skip'])->name('test.skip');
 
 
     Route::get('/purchase', [\App\Http\Controllers\PurchaseController::class, 'create'])->name('purchase.create');
@@ -44,10 +44,16 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => 'auth'], fu
 
 
     Route::resource('user', \App\Http\Controllers\Admin\UserController::class)
-        ->except(['destroy']);
+        ->except(['destroy', 'show']);
     Route::resource('content', \App\Http\Controllers\Admin\ContentController::class)
         ->only(['index', 'edit', 'update']);
 
+    Route::resource('block', \App\Http\Controllers\Admin\BlockController::class)
+        ->except(['show']);
+    Route::post('question/order', [\App\Http\Controllers\Admin\QuestionController::class, 'order'])
+        ->name('question.order');
+    Route::resource('question', \App\Http\Controllers\Admin\QuestionController::class)
+        ->except(['show', 'index']);
 });
 
 require __DIR__.'/auth.php';

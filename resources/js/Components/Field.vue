@@ -51,10 +51,10 @@ export default {
 </script>
 
 <template>
-    <div class="field" :class="fieldClass" ref="wrapper">
+    <div :class="fieldClass" ref="wrapper">
         <label class="input-label" v-if="label!==undefined">{{ label }}</label>
         <div>
-            <div :class="{'has-error': hasErrors}">
+            <div class="field-inner" :class="{'has-error': hasErrors}">
                 <slot></slot>
             </div>
             <p v-for="err of filteredErrors" class="input-error">{{ err }}</p>

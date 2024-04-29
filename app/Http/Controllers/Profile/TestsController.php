@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Profile;
 
 use App\Http\Controllers\Controller;
-use App\Models\Test;
+use App\Models\Test\Test;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;

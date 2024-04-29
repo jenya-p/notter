@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Block;
+use App\Models\Quiz\Block;
 use Inertia\Inertia;
 
 class HomeController extends Controller {

@@ -1,6 +1,7 @@
 <template>
-    <div class="pagination" v-if="lPageCount != 0">
-        <p class="">{{ label }}</p>
+    <div class="ticket-filter" v-if="count != 0">
+        <label>Билет</label>
+        <input type="number" v-model="current" min="1" :max="count" class="input" placeholder="№">
         <template v-for="i in pages">
             <span v-if="i=='sep'" class="separator">...</span>
             <span v-else-if="i == current" class="active">{{ i }}</span>
@@ -11,29 +12,15 @@
 
 <script>
 export default {
-    name: "pagination",
     data() {
         return {
             current: this.modelValue,
         }
     },
     props: {
-        itemCount: {
+        count: {
             type: Number,
             required: false,
-        },
-        ipp: {
-            type: Number,
-            required: false,
-            default: 10
-        },
-        pageCount: {
-            type: Number,
-            required: false,
-        },
-        label: {
-          type: String,
-          default: 'Страницы:'
         },
         modelValue: ''
     },
@@ -44,21 +31,12 @@ export default {
         }
     },
     computed: {
-        lPageCount() {
-            if(this.pageCount){
-                return this.pageCount;
-            } else if (this.itemCount){
-                return Math.ceil(this.itemCount / this.ipp);
-            } else {
-                return 0
-            }
-        },
         pages() {
             var pages = [];
-            for (var i = 1; i <= this.lPageCount; i++) {
-                if (i === 1 || i === this.lPageCount || (i > Math.min(this.lPageCount - 7, this.current - 3) && i < Math.max(8, this.current + 3))) {
+            for (var i = 1; i <= this.count; i++) {
+                if (i === 1 || i === this.count || (i > Math.min(this.count - 7, this.current - 3) && i < Math.max(8, this.current + 3))) {
                     pages.push(i);
-                } else if (i === 2 || (i === this.lPageCount - 1 && this.current !== 'all')) {
+                } else if (i === 2 || (i === this.count - 1 && this.current !== 'all')) {
                     pages.push('sep');
                 }
             }
@@ -74,12 +52,22 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.pagination {
+.ticket-filter {
     @import "resources/css/admin-vars";
 
-    width: auto;
-    margin: 0 5px 0 auto;
     display: flex;
+    width: auto;
+    margin: 0.5em 5px 1.7em auto;
+    gap: 15px;
+    align-items: center;
+
+
+    label{
+
+    }
+    input {
+        width: 70px;
+    }
 
     .separator {
         font-size: 14px;
@@ -92,13 +80,6 @@ export default {
         margin-left: 7px;
     }
 
-    p {
-        font-size: 14px;
-        color: #666666;
-        margin: 0;
-        padding: 0 5px 0 0 ;
-        line-height: 32px;
-    }
 
     .active,a {
         font-size: 14px;

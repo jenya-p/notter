@@ -1,76 +1,118 @@
 <template>
-    <GuestLayout wrapper-class="profile-page" :title="test.title">
-        <h1 class="d-only">Результаты тестирования</h1>
-        <h2 class="d-only">{{ test.title }}</h2>
-        <div class="block block-1">
-            <h1 class="m-only">Результаты тестирования</h1>
-            <h2 class="m-only">{{ test.title }}</h2>
+    <div class="block block-1">
+        <h2>Результат билета №{{ticket.order}}</h2>
+        <p class="summary">Правильных ответов: <span class="value color-green">{{
+                ticket.right_count
+            }} ({{ Math.round(100 * ticket.right_count / ticket.question_count) }}%)</span></p>
+        <p class="summary">Неправильных ответов: <span class="value color-red">{{
+                ticket.wrong_count
+            }} ({{ Math.round(100 * ticket.wrong_count / ticket.question_count) }}%)</span></p>
+        <p class="summary">Пропущенных: <span class="value color-gray">{{
+                ticket.skipped_count
+            }} ({{ Math.round(100 * ticket.skipped_count / ticket.question_count) }}%)</span></p>
+    </div>
 
-            <p class="summary">Правильных ответов: <span class="value color-green">{{
-                    test.right_count
-                }} ({{ Math.round(100 * test.right_count / test.question_count) }}%)</span></p>
-            <p class="summary">Неправильных ответов: <span class="value color-red">{{
-                    test.wrong_count
-                }} ({{ Math.round(100 * test.wrong_count / test.question_count) }}%)</span></p>
-            <p class="summary">Пропущенных: <span class="value color-gray">{{
-                    test.skipped_count
-                }} ({{ Math.round(100 * test.skipped_count / test.question_count) }}%)</span></p>
+    <div class="block block-2">
+        <ul class="tabs">
+            <li v-for="tb of tabs" :class="{'active': tb.key===tab}">
+                <a @click="tab=tb.key">{{ tb.label }}</a></li>
+        </ul>
 
-        </div>
-        <div class="block block-2">
-
-            <div class="block-bordered">
-                <div class="tabs-fake">
-                    <span>Неверные ответы</span>
-                </div>
-            </div>
-
-            <div class="block-bordered block-bordered-2">
-                <div v-for="item of test.answers" class="item">
+        <div class="block-bordered block-bordered-2">
+            <template v-for="question of ticket.questions">
+                <div v-if="question.result === tab || tab == 'all'" class="item">
                     <p class="answer-indexes">
-                        <span>Билет <span class="answer-index font-inter">{{ item.ticket_index }}</span></span>
-                        <span>Вопрос <span class="answer-index font-inter color-red">{{
-                                item.question_index
+                        <span>Билет <span class="answer-index font-inter">{{ ticket.order }}</span></span>
+                        <span>Вопрос <span class="answer-index font-inter" :class="{
+                            'color-red': question.result=='wrong',
+                            'color-green': question.result=='right'
+                            }">{{
+                                question.order
                             }}</span></span>
                     </p>
-                    <h3>{{ item.question_text }}</h3>
-                    <template v-if="item.is_right">
+                    <h3>{{ question.question }}</h3>
+                    <template v-if="question.result === 'right'">
                         <p class="label">Ваш ответ</p>
-                        <p class="answer color-green">{{ item.answer_text }}</p>
+                        <p class="answer color-green">{{ question.answer_text }}</p>
+                    </template>
+                    <template v-else-if="question.result === 'wrong'">
+                        <p class="label">Ваш ответ</p>
+                        <p class="answer color-red">{{ question.answer_text }}</p>
+                        <p class="label">Правильный ответ</p>
+                        <p class="answer color-green">{{ question.right_answer_text }}</p>
                     </template>
                     <template v-else>
-                        <p class="label">Ваш ответ</p>
-                        <p class="answer color-red">{{ item.answer_text }}</p>
                         <p class="label">Правильный ответ</p>
-                        <p class="answer color-green">{{ item.right_answer_text }}</p>
+                        <p class="answer color-green">{{ question.right_answer_text }}</p>
                     </template>
-                    <div class="description content">{{ item.description }}</div>
+                    <div class="description content">{{ question.description }}</div>
                 </div>
-            </div>
-
-
+            </template>
         </div>
-    </GuestLayout>
+
+
+    </div>
+
 </template>
 
 <script>
 import GuestLayout from "@/Layouts/GuestLayout.vue";
 import Radio from "@/Components/Radio.vue";
-import {ref} from "vue";
 import NumberLine from "@/Components/NumberLine.vue";
-import {router} from "@inertiajs/vue3";
 
 export default {
     components: {NumberLine, Radio, GuestLayout},
     props: [
-        'test'
+        'ticket'
     ],
     data() {
-        return {}
+        return {
+            tabs: [],
+            tab: null
+        }
     },
-    methods: {},
-    watch: {},
-    computed: {}
+    methods: {
+        refresh(){
+            let tabs = [];
+            let src = {
+                wrong: 'Неверные ответы',
+                skipped: 'Пропущенные вопросы',
+                right: 'Верные ответы',
+            };
+            for (const key in src) {
+                if(this.ticket[key + '_count'] > 0){
+                    tabs.push({
+                        key: key,
+                        label: src[key]
+                    })
+                }
+            }
+            if(tabs.length > 1){
+                tabs.push({
+                    key: 'all',
+                    label: 'Все'
+                })
+            }
+            this.tabs = tabs;
+            this.tab = tabs.length ? tabs[0].key : null;
+            this.$nextTick(function () {
+                history.replaceState({}, '', route('test', {
+                    test:           this.ticket.test_id,
+                    ticketIndex:    this.ticket.order,
+                    questionIndex:  'summary'
+                }));
+            });
+
+        }
+    },
+    watch: {
+        ticket(){
+            this.refresh();
+        }
+    },
+    mounted() {
+        this.refresh();
+    }
 }
 
 
@@ -79,48 +121,19 @@ export default {
 <style lang="scss" scoped>
 
 @import "resources/css/admin-vars";
-
-@media screen and (max-width: 500px) {
-    .d-only {
-        display: none;
-    }
-    h1 {
-        margin-bottom: 8px;
-        text-align: left;
-    }
-    h2 {
-        text-align: left;
-    }
-}
-
-@media screen and (min-width: 500px) {
-    .m-only {
-        display: none;
-    }
-
-    h1 {
-        line-height: 0;
-        text-align: center;
-        margin-bottom: 8px;
-    }
-
-    h2 {
-        margin-bottom: 10px;
-        text-align: center;
-    }
-
-}
-
-h1 {
-
-    font-weight: 600;
-}
-
 h2 {
-
     font-size: 16px;
     font-weight: 600;
+    @media screen and (max-width: 500px) {
+        text-align: left;
+    }
+
+    @media screen and (min-width: 500px) {
+        margin-bottom: 25px;
+        text-align: center;
+    }
 }
+
 
 .block-1 {
     @media screen and (min-width: 500px) {
@@ -135,7 +148,7 @@ h2 {
 
 .block-2 {
     @media screen and (min-width: 500px) {
-        padding-top: 30px
+
     }
     @media screen and (max-width: 500px) {
         padding-top: 0;

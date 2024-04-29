@@ -14,10 +14,11 @@ return new class extends Migration {
         Schema::create('quiz_blocks', function (Blueprint $table) {
             $table->id();
             $table->boolean('active')->default(true);
-            $table->integer('order');
+            $table->unsignedMediumInteger('order');
             $table->string('title');
             $table->text('description')->nullable();
             $table->decimal('price', 11, 2);
+            // $table->unsignedMediumInteger('ticket_count')->default(0);
             $table->boolean('is_plain_text')->default(false);
             $table->unsignedSmallInteger('passing_score')->nullable();
 
@@ -25,51 +26,22 @@ return new class extends Migration {
             $table->softDeletes();
         });
 
-        Schema::create('quiz_tickets', function (Blueprint $table) {
+        Schema::create('quiz_questions', function (Blueprint $table) {
             $table->id();
             $table->foreignId('block_id');
-            $table->foreign('block_id', 'tickets__block')
+            $table->foreign('block_id', 'questions__block')
                 ->references('id')
                 ->on('quiz_blocks')
                 ->cascadeOnDelete()->cascadeOnUpdate();
-
-            $table->integer('order');
-
-            $table->timestamps();
-            $table->softDeletes();
-        });
-
-        Schema::create('quiz_questions', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('ticket_id');
-            $table->foreign('ticket_id', 'questions__ticket')
-                ->references('id')
-                ->on('quiz_tickets')
-                ->cascadeOnDelete()->cascadeOnUpdate();
-
-            $table->integer('order');
+            $table->unsignedMediumInteger('ticket')->nullable();
+            $table->unsignedMediumInteger('order');
             $table->text('text');
             $table->text('description')->nullable();
+            $table->json('options')->nullable();
+            $table->unsignedSmallInteger('right')->nullable();
 
             $table->timestamps();
             $table->softDeletes();
-        });
-
-        Schema::create('quiz_variants', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('question_id');
-            $table->foreign('question_id', 'variants__question')
-                ->references('id')
-                ->on('quiz_questions')
-                ->cascadeOnDelete()->cascadeOnUpdate();
-
-            $table->integer('order');
-            $table->boolean('is_right');
-            $table->text('text');
-
-            $table->timestamps();
-            $table->softDeletes();
-
         });
 
 
@@ -120,47 +92,64 @@ return new class extends Migration {
 
             $table->decimal('amount', 11, 2);
 
+            $table->unsignedSmallInteger('passing_score')->nullable();
             $table->date('available_till');
             $table->dateTime('completed_at')->nullable();
 
+            $table->unsignedMediumInteger('ticket_count')->default(0);
+            $table->unsignedMediumInteger('ticket_passed_count')->default(0);
+            $table->unsignedMediumInteger('ticket_failed_count')->default(0);
+
             $table->unsignedMediumInteger('question_count')->default(0);
-            $table->unsignedMediumInteger('right_count')->default(0);
-            $table->unsignedMediumInteger('wrong_count')->default(0);
+            $table->unsignedMediumInteger('question_right_count')->default(0);
+            $table->unsignedMediumInteger('question_wrong_count')->default(0);
 
             $table->timestamps();
             $table->softDeletes();
 
         });
 
-
-        Schema::create('test_answers', function(Blueprint $table){
+        Schema::create('test_tickets', function(Blueprint $table){
             $table->id();
 
             $table->foreignId('test_id');
-            $table->foreign('test_id', 'test_answers__test')
+            $table->foreign('test_id', 'test_tickets__test')
                 ->references('id')
                 ->on('tests')
                 ->cascadeOnDelete()->cascadeOnUpdate();
 
-            $table->foreignId('question_id');
-            $table->foreign('question_id', 'test_answers__question')
+            $table->unsignedMediumInteger('order');
+
+            $table->dateTime('started_at')->nullable();
+            $table->dateTime('completed_at')->nullable();
+
+            $table->timestamps();
+
+        });
+
+        Schema::create('test_questions', function(Blueprint $table){
+            $table->id();
+
+            $table->foreignId('ticket_id');
+            $table->foreign('ticket_id', 'test_questions__ticket')
+                ->references('id')
+                ->on('test_tickets')
+                ->cascadeOnDelete()->cascadeOnUpdate();
+
+            $table->foreignId('quiz_question_id');
+            $table->foreign('quiz_question_id', 'test_questions__quiz_question')
                 ->references('id')
                 ->on('quiz_questions')
                 ->restrictOnDelete()->cascadeOnUpdate();
 
-            $table->foreignId('variant_id');
-            $table->foreign('variant_id', 'test_answers__variant')
-                ->references('id')
-                ->on('quiz_variants')
-                ->restrictOnDelete()->cascadeOnUpdate();
+            $table->unsignedMediumInteger('order');
 
-            $table->unsignedSmallInteger('ticket_index');
-            $table->unsignedSmallInteger('question_index');
-            $table->text('question_text');
-            $table->text('answer_text');
-            $table->boolean('is_right');
-            $table->text('right_answer_text')->nullable();
-            $table->text('question_description')->nullable();
+            $table->text('question');
+            $table->text('description');
+            $table->json('options');
+            $table->unsignedSmallInteger('right');
+            $table->unsignedSmallInteger('answer')->nullable();
+            $table->dateTime('solved_at')->nullable();
 
             $table->timestamps();
 
@@ -174,7 +163,8 @@ return new class extends Migration {
     public function down(): void {
 
 
-        Schema::dropIfExists('test_answers');
+        Schema::dropIfExists('test_questions');
+        Schema::dropIfExists('test_tickets');
         Schema::dropIfExists('tests');
         Schema::dropIfExists('payments');
         Schema::dropIfExists('quiz_variants');

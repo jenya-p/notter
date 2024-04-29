@@ -21,12 +21,11 @@ let refresh = function (el) {
 export default {
     mounted: (el, binding) => {
         window.addEventListener('resize', refresh(el));
-        refresh();
+        refresh(el)();
     },
     unmounted: (el, binding) => {
         window.removeEventListener('resize', refresh(el));
     },
-
 }
 
 

@@ -2,7 +2,9 @@ $green: #17a985; // #2AB795;
 $darkgreen: darken($green, 15);
 $red: #f84530;
 $foreColor: #242a2f;
+$lightForeColor: lighten($foreColor, 15);
 $border-color: #E7E7E7;
+$border-color-hover: darken($border-color, 15);
 
 @mixin green-box {
     background: linear-gradient(0deg, darken($green,2) 0%, lighten($green,2) 100%);
@@ -22,5 +24,15 @@ $border-color: #E7E7E7;
     &::-webkit-scrollbar-thumb {
         background-color: $red;
         border-radius: 2px;
+    }
+}
+@mixin mobile {
+    @media only screen and (max-width: 980px) {
+        @content;
+    }
+}
+@mixin desktop {
+    @media only screen and (min-width: 980px) {
+        @content;
     }
 }

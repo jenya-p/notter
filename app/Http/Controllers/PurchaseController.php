@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Block;
-use App\Models\Test;
+use App\Models\Quiz\Block;
+use App\Models\Test\Test;
 use Illuminate\Http\Request;
 
 class PurchaseController extends Controller {
@@ -19,8 +19,7 @@ class PurchaseController extends Controller {
 
         /** @var Block $block */
         foreach ($blocks as $block){
-            Test::create([
-                'block_id' => $block->id,
+            $block->createTest([
                 'user_id' => \Auth::id(),
                 'title' => $block->title,
                 'amount' => $block->price,

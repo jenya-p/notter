@@ -6,8 +6,8 @@
 
             <template v-for="index in numbers">
                 <span v-if="index==='s'" class="spacer">...</span>
-                <a v-else-if="index != current" @click="current = index" :class="itemClass(options[index-1])">{{ index }}</a>
-                <span v-else :class="itemClass(options[index-1])">{{ index }}</span>
+                <a v-else-if="index != current" @click="current = index" :class="itemClass(index)">{{ index }}</a>
+                <span v-else :class="itemClass(index)">{{ index }}</span>
             </template>
 
             <a @click="roll(1)" class="roller roller-right" v-if="showRollers" :class="{disabled: !rightRoller}"></a>
@@ -27,8 +27,8 @@ export default {
             type: Number,
             default: 0
         },
-        options: {
-            type: Array
+        count: {
+            type: Number
         },
         itemClass: {
             type: Function
@@ -53,9 +53,6 @@ export default {
             set(val) {
                 this.$emit("update:modelValue", val);
             },
-        },
-        count(){
-            return this.options.length;
         }
     },
     methods: {
@@ -115,9 +112,6 @@ export default {
             this.pos += direction;
             this.resize();
         },
-        // getClasses(index){
-        //     return {green: this.options[index - 1].passed == true || this.options[index - 1].answer !== null };
-        // }
     },
     mounted() {
         window.addEventListener('resize', this.resize);
@@ -139,6 +133,7 @@ export default {
     display: flex;
     gap: 10px;
     align-items: center;
+    padding: 5px;
     @media screen and (min-width: 700px) {
 
     }
@@ -197,7 +192,6 @@ export default {
             margin: 0;
             border-radius: 8px;
             font-family: 'Jura', sans-serif, serif;
-
         }
 
         a {
@@ -264,18 +258,9 @@ export default {
             background: #F1F1F1;
             font-weight: 400;
             box-sizing: content-box;
-        }
-
-        a {
-            color: #999;
             border: 2px solid #F1F1F1;
         }
 
-        span {
-            background: white;
-            border: 2px solid #1AB69D;
-
-        }
     }
 
     &--white .number-line-inner {
@@ -294,16 +279,7 @@ export default {
             flex-grow: 0;
         }
 
-        a {
-            color: #333;
-            border: 1px solid #DADADA;
-            padding: 1px;
-        }
 
-        span {
-            border: 2px solid #1AB69D;
-            padding: 0px;
-        }
     }
 
 
