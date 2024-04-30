@@ -42,7 +42,7 @@ trait Ordered {
 
         self::created(function (Model $me){
             if (self::$_orderingHooksDisabled) return;
-            self::fixOrders($me->id);
+            self::fixOrders($me);
         });
 
         self::updated(function (Model $me) use ($getCategoryQuery) {
