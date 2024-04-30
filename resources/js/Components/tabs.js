@@ -27,6 +27,9 @@ export const tabs = {
     },
     methods: {
         selectTab: function (selectedTab) {
+            if(!selectedTab){
+                return;
+            }
             let oldTab = this.activeTab;
             this.activeTab = selectedTab.name;
             this.activeLabel = selectedTab.label;
