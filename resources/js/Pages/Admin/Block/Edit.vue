@@ -4,8 +4,8 @@
     <AdminLayout :title="item.id ? item.title : 'Новый блок'"
                  :breadcrumb="[{link: route('admin.block.index'), label: 'Блоки тестов'}, item.id ? item.title: 'Новый блок']">
 
-        <tabs class="block">
-            <tab name="info" label="Основная информация" :has-error="tabErrors.info">
+        <tabs class="block">sdasdasdasd
+            <tab name="info" label="Основная информация" :has-error="tabErrors.info" :selected="true">
 
                 <form method="post" @submit.prevent="submit" v-field-container>
 
@@ -62,9 +62,11 @@ import Questions from "./Questions.vue"
 import QuestionsPlain from "@/Pages/Admin/Block/QuestionsPlain.vue";
 import _isObject from "lodash/isObject";
 import _extend from "lodash/extend";
+import tabs from "@/Components/tabs.vue";
+import tab from "@/Components/tab.vue";
 
 export default {
-    components: {QuestionsPlain, Link, Radio, Checkbox, TextareaAutosize, AdminLayout, Field, Questions, ckeditor: CKEditor.component},
+    components: {tabs, tab, QuestionsPlain, Link, Radio, Checkbox, TextareaAutosize, AdminLayout, Field, Questions, ckeditor: CKEditor.component},
     props: {
         item: {
             type: Object,

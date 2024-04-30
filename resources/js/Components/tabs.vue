@@ -1,6 +1,5 @@
-export const tabs = {
-    template: `
-        <div>
+<template>
+    <div>
         <div class="tabs">
             <ul>
                 <li v-for="tab in tabs" :class="{ 'is-active': tab.isActive, 'tab-has-errors': tab.hasError }" :data-tab-name="tab.name">
@@ -15,8 +14,12 @@ export const tabs = {
         <div class="tabs-details">
             <slot></slot>
         </div>
-        </div>
-    `,
+    </div>
+</template>
+<script>
+export default {
+    name: 'tabs',
+
     data() {
         return {
             tabs: [],
@@ -63,31 +66,6 @@ export const tabs = {
         }
     }
 };
+</script>
 
-export const tab = {
-    props: {
-        name: {required: true},
-        label: {required: true},
-        selected: {default: false},
-        iconClass: {default: null},
-        hasError:  false
-    },
-    template: `
-        <div v-show="isActive">
-        <slot></slot>
-        </div>`,
-    data() {
-        return {isActive: false}
-    },
-    computed: {
-        href() {
-            return '#' + this.name.toLowerCase().replace(/ /g, '-');
-        }
-    },
-    created() {
-        this.$parent.tabs.push(this);
-    },
-    mounted() {
-        this.isActive = this.selected;
-    }
-}
+
