@@ -4,7 +4,7 @@
     <AdminLayout :title="item.id ? item.title : 'Новый блок'"
                  :breadcrumb="[{link: route('admin.block.index'), label: 'Блоки тестов'}, item.id ? item.title: 'Новый блок']">
 
-        <tabs class="block">sdasdasdasd
+        <tabs class="block">
             <tab name="info" label="Основная информация" :has-error="tabErrors.info" :selected="true">
 
                 <form method="post" @submit.prevent="submit" v-field-container>
