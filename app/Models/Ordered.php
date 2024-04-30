@@ -64,11 +64,10 @@ trait Ordered {
                     }
                     self::$_orderingHooksDisabled = false;
                 }
-                self::fixOrders($me->id);
-            } else if($me->isDirty('order')){
-                self::fixOrders($me->id);
+                self::fixOrders($me);
             } else if ($categoryChanged) {
-                self::fixOrders($me->id);
+                self::fixOrders($me, true);
+                self::fixOrders($me);
             }
         });
 
@@ -77,30 +76,72 @@ trait Ordered {
             array_keys((new \ReflectionClass(self::class))->getTraits())
         );
 
-        self::deleted(function(){
+        self::deleted(function($me){
             if (self::$_orderingHooksDisabled) return;
-            self::fixOrders();
+            self::fixOrders($me);
         });
 
         if($isSoftDeletes){
             self::softDeleted(function($me){
                 if (self::$_orderingHooksDisabled) return;
-                self::fixOrders();
+                self::fixOrders($me);
             });
             self::restored(function($me){
                 if (self::$_orderingHooksDisabled) return;
-                self::fixOrders($me->id);
+                self::fixOrders($me);
             });
         }
 
 
     }
 
-    public function fixOrder() {
-        self::fixOrders($this->id);
+
+    public function orderSiblings($original = false){
+        $query = self::query();
+        if (property_exists(self::class, 'orderedCategory')) {
+            $ocs = self::$orderedCategory;
+            if (!is_array($ocs)) {
+                $ocs = [$ocs];
+            }
+            foreach ($ocs as $oc) {
+                if($original){
+                    $query->where($oc, '=', $this->getOriginal($oc));
+                } else {
+                    $query->where($oc, '=', $this->{$oc});
+                }
+            }
+        }
+        return $query;
     }
 
-    public static function fixOrders($preserveId = null) {
+    /*
+     * Версия для MySQL 7.4
+     */
+    public static function fixOrders(self $preserve, $original = false) {
+        if(self::$_orderingHooksDisabled) return;
+
+        $query = $preserve->orderSiblings($original);
+
+        $query->orderBy('order', 'ASC');
+        $query->orderByRaw('`id` = ' . $preserve->id . ' DESC');
+        $query->orderBy('id', 'ASC');
+
+        $data = $query->select('id', 'order')->get('id', 'order');
+
+        self::$_orderingHooksDisabled = true;
+        foreach ($data as $index => $item){
+            if($item->order != $index + 1){
+                $item->update(['order' => $index + 1]);
+            }
+        }
+        self::$_orderingHooksDisabled = false;
+    }
+
+
+    /*
+     * Версия для MySQL 8.0 основана на функции ROW_NUMBER
+     */
+    public static function fixOrders80($preserveId = null) {
         if(self::$_orderingHooksDisabled) return;
         $orderPart = [];
         if (property_exists(self::class, 'orderedCategory')) {

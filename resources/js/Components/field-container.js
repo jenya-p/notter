@@ -2,7 +2,7 @@
 
 
 let refresh = function (el) {
-    let p = true;
+    let p = el.clientWidth >= 800;
     return function(){
         if (el.clientWidth < 800) {
             if (p) {

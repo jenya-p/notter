@@ -15,24 +15,19 @@ class ExampleTest extends TestCase
     public function test(): void
     {
 
-        for ($i = 16; $i < 36; $i++){
-            Question::withoutEvents(function() use ($i){
-                Question::find($i)->update(['order' => rand(1, 40)]);
+        $order = 1;
+        for ($id = 16; $id < 36; $id++){
+            Question::withoutEvents(function() use ($id, &$order){
+                $item = Question::find($id);
+                if($item){
+                    $item->update(['order' => $order++]);
+                }
             });
         }
-        // die;
-        for ($i = 16; $i < 36; $i++){
-  //          Question::withoutEvents(function() use ($i){
-                Question::find($i)->update(['order' => $i - 15]);
-  //          });
-        }
 
-//
-//        $q = Question::find(1227);
-//        $q->delete();
-//        $q->fixOrder();
-
-        // $q->fixOrder();
+        /** @var Question $q */
+        $q = Question::withTrashed()->find(22);
+        $q->forceDelete();
 
     }
 
