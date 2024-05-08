@@ -25,7 +25,7 @@ export default {
                 password_confirmation: '',
             })
         }
-    }
+    },
 }
 
 
@@ -38,18 +38,20 @@ export default {
             <ProfileTabs active="profile"/>
         </div>
         <div class="block">
-
             <ProfileInfoTabs/>
             <div class="block-bordered">
-                <form @submit.prevent="form.patch(route('profile.update'))" class="form-wrapper">
+                <p v-if="status" class="status">
+                    {{ status }}
+                </p>
+                <form @submit.prevent="form.put(route('password.update'))" class="form-wrapper">
                     <Field :errors="form.errors" for="current_password">
-                        <input class="input input-password" v-model="form.current_password" placeholder="Текущий пароль">
+                        <input type="password" class="input input-password" v-model="form.current_password" placeholder="Текущий пароль">
                     </Field>
                     <Field :errors="form.errors" for="password">
-                        <input class="input input-password" v-model="form.password" placeholder="Новый пароль">
+                        <input type="password" class="input input-password" v-model="form.password" placeholder="Новый пароль">
                     </Field>
                     <Field :errors="form.errors" for="password_confirmation">
-                        <input class="input input-password" v-model="form.password_confirmation" placeholder="Подтверждение пароля">
+                        <input type="password" class="input input-password" v-model="form.password_confirmation" placeholder="Подтверждение пароля">
                     </Field>
 
                     <button type="submit" class="btn btn-sm btn-green">Изменить пароль</button>
@@ -59,3 +61,9 @@ export default {
     </GuestLayout>
 </template>
 
+<style lang="scss" scoped>
+.status{
+    margin: 10px 0 20px;
+    font-size: 1.1em;
+}
+</style>

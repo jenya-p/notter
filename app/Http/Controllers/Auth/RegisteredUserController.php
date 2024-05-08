@@ -33,8 +33,12 @@ class RegisteredUserController extends Controller
     public function store(Request $request): RedirectResponse
     {
         $request->validate([
+            'confirm' => 'accepted',
             'email' => 'required|string|lowercase|email|max:255|unique:'.User::class,
             'password' => ['required', 'confirmed', Rules\Password::min(6)],
+        ], [
+            'accepted' => 'Вы должны принять пользовательское соглашение',
+            'password.min' => 'Количество символов в пароле должно быть не меньше :min.'
         ]);
 
         $user = User::create([

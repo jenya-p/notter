@@ -77,6 +77,7 @@ header{
 .header-side-placeholder{
     width: 250px;
     flex-grow: 1;
+    position: relative;
     &:last-child{
         display: flex;
         justify-content: flex-end;
@@ -134,7 +135,54 @@ header{
     text-overflow: ellipsis;
     white-space: nowrap;
 }
-
+.header-popup-menu{
+    background: white;
+    padding: 15px 20px;
+    position: absolute;
+    right: 0px;
+    border-radius: 4px;
+    border: 1px solid #f4f4f4;
+    box-shadow: 5px 7px 30px -5px #0000007a;
+    transition: opacity 300ms ease, top 300ms ease, transform 300ms ease;
+    top: -45px;
+    opacity: 0;
+    transform: scaleY(0.1);
+    pointer-events: none;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    &.opened{
+        top: 50px;
+        opacity: 1;
+        transform: none;
+        pointer-events: all;
+    }
+    li{
+        border-bottom: 1px solid transparent;
+        &.admin{
+            border-bottom: 1px solid #E7E7E788;
+        }
+    }
+    a{
+        display: inline-block;
+        color: inherit;
+        font-weight: 600;
+        white-space: nowrap;
+        padding: 6px 10px 4px 10px;
+    }
+    &:after{
+        position: absolute;
+        top: -5px;
+        right: 13px;
+        width: 10px;
+        height: 10px;
+        content: "";
+        border-top: 1px solid #f4f4f4;
+        border-right: 1px solid #f4f4f4;
+        transform: rotate(-45deg);
+        background: white;
+    }
+}
 @media screen and (max-width: 1100px) {
     header{
         padding-right: 55px;
@@ -538,7 +586,21 @@ footer ul li a:hover{}
             border-radius: 1px;
         }
     }
-
+    .profile-page .empty-table {
+        border: 1px solid #E5E7EB;
+        border-radius: 8px;
+        min-height: 380px;
+        margin: 15px 0;
+        padding: 15px 20px;
+        overflow-y: hidden;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        .btn{
+            width: auto;
+        }
+    }
     table.table{
         width: 100%;
         font-size: 13.3px;
@@ -590,7 +652,14 @@ footer ul li a:hover{}
         margin: 15px 0;
         padding: 10px 0 0 0;
     }
+    .profile-page .empty-table {
+        padding: 35px 10px;
+        overflow-y: hidden;
 
+        .btn{
+            width: auto;
+        }
+    }
     table.table{
         display: block;
         font-size: 13.3px;
@@ -797,7 +866,7 @@ body:not(.green-decorator) {
         font-size: 14px;
         font-weight: 400;
         float: right;
-        margin-bottom: 28px;
+        margin-bottom: 0;
     }
 
     .hr {
@@ -806,6 +875,7 @@ body:not(.green-decorator) {
         text-align: center;
         position: relative;
         margin-bottom: 31px;
+        margin-top: 40px;
         &:before, &:after {
             content: '';
             display: inline-block;
@@ -813,7 +883,7 @@ body:not(.green-decorator) {
             position: absolute;
             border-bottom: 1px solid #A4A4A4;
             width: 41%;
-            top: 7px;
+            top: 10px;
         }
 
         &:before {
@@ -891,4 +961,105 @@ body:not(.green-decorator) {
         }
     }
 
+    @media screen and (max-width: 500px) {
+        .block+.block{margin-top: -11px;
+            border-top: none;
+            box-shadow: none;
+            padding-top: 0;
+            .tabs, .tabs-fake {
+                margin-bottom: 20px;
+                margin-top: 0;
+            }
+        }
+
+    }
+
+}
+.content-page {
+
+    @media screen and (min-width: 500px) {
+        position: relative;
+        padding-top: 25px;
+        .decorator{
+            position: absolute;
+            left: 50%;
+            margin-left: -800px;
+            z-index: -1;
+            @media screen and (max-height: 1000px) and (min-height: 700px){
+                top:50%; margin-top: -145px;
+            }
+            @media screen and ((min-height: 1000px) or (max-height: 700px)){
+                top: 255px; margin-top: 0;
+            }
+        }
+    }
+    @media screen and (max-width: 500px) {
+        .decorator {
+            display: none;
+        }
+    }
+
+    .block{
+        width: 100%;
+        max-width: 780px;
+        margin: 0 auto;
+        display: flex;
+        flex-direction: column;
+        gap: 0;
+
+        h1.main-page-title {
+            font-size: 24px;
+            font-weight: 500;
+            text-align: center;
+            flex-grow: 0;
+        }
+
+        .content-wrapper{
+            background: #F9F9F9;
+            height: 100%;
+
+
+            border-radius: 10px;
+            @media screen and (min-width: 500px) {
+                margin: -23px -13px 0 -13px;
+                padding: 20px;
+            }
+            @media screen and (max-width: 500px) {
+                margin: -10px -10px 0 -10px;
+                padding: 20px 10px;
+            }
+
+            .content {
+                flex-grow: 1;
+                @media screen and (min-width: 500px) {
+                    padding-right: 20px;
+                }
+
+            }
+        }
+    }
+
+    @media screen and (min-height: 700px) and (min-width: 500px){
+        .content-wrapper {
+            max-height: calc(100vh - 400px);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            .content{
+                overflow-x: hidden;
+                overflow-y: scroll;
+                height: 100%;
+                &::-webkit-scrollbar {
+                    width: 5px;
+                }
+                &::-webkit-scrollbar-track {
+                    background: transparent;
+                }
+                &::-webkit-scrollbar-thumb {
+                    background-color: #D9D9D9;
+                    border-radius: 3px;
+                }
+            }
+        }
+    }
 }

@@ -64,7 +64,4 @@ export default {
 
 <template>
     <p v-for="err of filteredErrors" class="input-error">{{ err }}</p>
-    <p class="input-error" v-show="message">
-        {{ message }}
-    </p>
 </template>

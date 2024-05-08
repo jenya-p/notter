@@ -24,9 +24,8 @@ class HomeController extends Controller {
 
 
     public function prices() {
-
         return Inertia::render('Public/Prices', [
-            'blocks' => Block::active()->get()
+            'blocks' => Block::active()->with('myActiveTests')->get()->append('available_till')
         ]);
 
     }

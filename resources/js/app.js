@@ -6,6 +6,7 @@ import { createApp, h } from 'vue';
 import { createInertiaApp } from '@inertiajs/vue3';
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import { ZiggyVue } from '../../vendor/tightenco/ziggy';
+import vClickOutside from "click-outside-vue3"
 import fieldContainer from "@/Components/field-container.js";
 import currency from "@/Filters/currency.js";
 import plural from "@/Filters/plural.js";
@@ -24,6 +25,7 @@ createInertiaApp({
         app.config.globalProperties.$filters = {currency: currency, plural: plural, htmlize: htmlize, date: date, phone: phone };
         app.use(plugin)
             .use(ZiggyVue)
+            .use(vClickOutside)
             .mount(el);
         return app;
     },

@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\Backfeed;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
 
@@ -25,10 +26,11 @@ class HandleInertiaRequests extends Middleware {
 
         if($request->routeIs('admin.*')){
             $this->rootView = 'admin';
+
         } else {
             $this->rootView = 'app';
         }
-        
+
         return parent::handle($request, $next);
     }
 
@@ -38,11 +40,20 @@ class HandleInertiaRequests extends Middleware {
      * @return array<string, mixed>
      */
     public function share(Request $request): array {
-        return [
+        $ret =  [
             ...parent::share($request),
             'auth' => [
                 'user' => $request->user(),
             ],
         ];
+
+        if($request->routeIs('admin.*')){
+            $ret['notifications'] = [
+                'backfeed' => Backfeed::where('status', '=', 'new')->count()
+            ];
+        }
+
+        return $ret;
+
     }
 }

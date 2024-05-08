@@ -6,8 +6,8 @@
 
             <template v-for="index in numbers">
                 <span v-if="index==='s'" class="spacer">...</span>
-                <a v-else-if="index != current" @click="current = index" :class="itemClass(index)">{{ index }}</a>
-                <span v-else :class="itemClass(index)">{{ index }}</span>
+                <a v-else-if="index != current" @click="current = index" :class="itemClass1(index)">{{ index }}</a>
+                <span v-else :class="itemClass1(index)">{{ index }}</span>
             </template>
 
             <a @click="roll(1)" class="roller roller-right" v-if="showRollers" :class="{disabled: !rightRoller}"></a>
@@ -56,8 +56,17 @@ export default {
         }
     },
     methods: {
-        resize() {
-
+        itemClass1(index){
+            let cl = [];
+            if(this.itemClass){
+                cl.push(this.itemClass(index));
+            }
+            if(index != 1 && index != this.count){
+                cl.push('movable');
+            }
+            return cl;
+        },
+        resize(checkOverflow = true) {
             let container = this.$refs.container;
             if(container == undefined) return;
 
@@ -83,6 +92,15 @@ export default {
                 this.showRollers = true;
                 maxCount = maxCount - 5;
                 this.pos = Math.min(this.pos, this.count - maxCount);
+
+                if(checkOverflow){
+                    if(this.modelValue < this.pos){
+                        this.pos = Math.max(2, this.modelValue);
+                    }
+                    if(this.modelValue > this.pos + maxCount - 2){
+                        this.pos = Math.min(this.count - maxCount, this.modelValue - maxCount + 2);
+                    }
+                }
 
                 this.numbers.push(1);
                 if(this.pos <= 2){
@@ -110,7 +128,7 @@ export default {
         },
         roll(direction) {
             this.pos += direction;
-            this.resize();
+            this.resize(false);
         },
     },
     mounted() {
@@ -122,6 +140,26 @@ export default {
     },
     created() {
 
+    },
+    watch: {
+        modelValue(val){
+            this.resize()
+        },
+        pos(v1, v2){
+            let cl = this.$refs.container.classList
+            if(v1 > v2){
+                cl.add('moving-right');
+                setTimeout(function(){
+                    cl.remove('moving-right');
+                },1);
+            } else {
+                cl.add('moving-left');
+                setTimeout(function(){
+                    cl.remove('moving-left');
+                },1);
+            }
+
+        }
     }
 }
 
@@ -203,7 +241,24 @@ export default {
             }
         }
 
+        .movable{
+            translate: 0 0;
+            transition: translate 200ms linear;
+        }
 
+        &.moving-left{
+            .movable{
+                translate: -25px 0;
+                transition: none;
+            }
+        }
+
+        &.moving-right{
+            .movable{
+                translate: 25px 0;
+                transition: none;
+            }
+        }
 
         .spacer {
             background: transparent;

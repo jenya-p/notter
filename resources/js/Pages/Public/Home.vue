@@ -4,13 +4,15 @@
         <div class="index-page--right">
             <h1 v-if="content.title">{{content.title}}</h1>
             <div v-html="content.content"></div>
-            <a href="" class="btn btn-green-dark">К тестам</a>
+            <Link v-if="$page.props.auth.user" :href="route('profile-test.index')" class="btn btn-green-dark">К тестам</Link>
+            <Link v-else href="/prices" class="btn btn-green-dark">К тестам</Link>
         </div>
     </GuestLayout>
 </template>
 
 <script setup>
 import GuestLayout from "@/Layouts/GuestLayout.vue";
+import {Link} from "@inertiajs/vue3";
 
 defineProps(['content'])
 

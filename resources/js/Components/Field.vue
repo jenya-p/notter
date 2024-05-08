@@ -3,7 +3,6 @@ import {isString, isArray, isObject, isEmpty} from "lodash"
 
 export default {
     props: ['errors', 'label', 'for', 'description'],
-
     computed: {
         hasErrors() {
             return this.filteredErrors.length != 0;
@@ -41,7 +40,11 @@ export default {
             return e;
         },
         fieldClass() {
-            return 'field field-' + this.for;
+            if(this.for){
+                return 'field field-' + this.for;
+            } else {
+                return 'field';
+            }
         }
     },
 
@@ -52,7 +55,8 @@ export default {
 
 <template>
     <div :class="fieldClass" ref="wrapper">
-        <label class="input-label" v-if="label!==undefined">{{ label }}</label>
+        <label v-if="$slots.label" class="input-label" ><slot name="label"/></label>
+        <label class="input-label" v-else-if="label!==undefined">{{ label }}</label>
         <div>
             <div class="field-inner" :class="{'has-error': hasErrors}">
                 <slot></slot>

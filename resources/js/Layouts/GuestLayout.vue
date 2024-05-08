@@ -22,6 +22,34 @@ export default {
         closer.addEventListener('click', function(){
             sidebar.style.display = 'none';
         });
+    },
+    methods: {
+        pressEsc (evt) {
+            console.log('pressEsc');
+            if (evt.key === "Escape") {
+                this.closePopupMenu();
+            }
+        },
+        openPopupMenu(){
+            this.$refs.headerPopupMenu.style.display = null;
+            let $v = this;
+            setTimeout(function(){
+                $v.$refs.headerPopupMenu.classList.add('opened');
+            }, 0);
+            document.addEventListener('keydown', this.pressEsc);
+        },
+        closePopupMenu(){
+            if(this.$refs.headerPopupMenu.style.display == 'none'){
+                return;
+            }
+            document.removeEventListener('keydown', this.pressEsc);
+            this.$refs.headerPopupMenu.classList.remove('opened');
+            let $v = this;
+            setTimeout(function(){
+                $v.$refs.headerPopupMenu.style.display = 'none';
+            }, 300);
+        }
+
     }
 }
 </script>
@@ -44,9 +72,12 @@ export default {
                 </Link>
 
                 <ul class="sidebar-menu">
-                    <li><a href="/profile/test">Тесты</a></li>
-                    <li><a href="/prices">Цены</a></li>
-                    <li><a href="/about">О нас</a></li>
+                    <li>
+                        <Link  v-if="$page.props.auth.user" href="/profile/test">Тесты</Link>
+                        <Link  v-else href="/prices">Тесты</Link>
+                    </li>
+                    <li><Link href="/prices">Цены</Link></li>
+                    <li><Link href="/about">О нас</Link></li>
                 </ul>
             </div>
             <header>
@@ -54,14 +85,26 @@ export default {
                     <Link href="/"><img src="/images/logo.svg" class="header-logo" alt="" /></Link>
                 </div>
                 <ul class="header-menu">
-                    <li><Link href="/profile/test">Тесты</Link></li>
+                    <li>
+                        <Link  v-if="$page.props.auth.user" href="/profile/test">Тесты</Link>
+                        <Link  v-else href="/prices">Тесты</Link>
+                    </li>
                     <li><Link href="/prices">Цены</Link></li>
                     <li><Link href="/about">О нас</Link></li>
                 </ul>
                 <div class="header-side-placeholder">
-                    <Link v-if="$page.props.auth.user" :href="route('profile-test.index')" class="header-user">
-                        <span>{{ $page.props.auth.user.display_name }}</span>
-                    </Link>
+                    <template v-if="$page.props.auth.user">
+                        <a @click.stop="openPopupMenu" href="javascript:;" class="header-user">
+                            <span>{{ $page.props.auth.user.display_name }}</span>
+                        </a>
+                        <ul class="header-popup-menu" ref="headerPopupMenu" v-click-outside="closePopupMenu" style="display: none">
+                            <li v-if="$page.props.auth.user && $page.props.auth.user.is_admin" class="admin"><a href="/admin" target="_blank">Админка</a></li>
+                            <li><Link :href="route('profile-test.index')">Мои тесты</Link></li>
+                            <li><Link :href="route('profile-finance.index')">Финансы</Link></li>
+                            <li><Link :href="route('profile.edit')">Профиль</Link></li>
+                            <li><Link :href="route('logout')" method="get">Выйти</Link></li>
+                        </ul>
+                    </template>
                     <Link v-else :href="route('login')" class="header-user" title="Войти"></Link>
                     <a href="javascript:;" class="sidebar-opener" ref="sidebar-opener"></a>
                 </div>
@@ -78,7 +121,7 @@ export default {
     <footer>
         <ul>
             <li><Link href="/about">О сервисе</Link></li>
-            <li><Link href="">Обратная связь</Link></li>
+            <li><Link href="/backfeed">Обратная связь</Link></li>
             <li><Link href="/agreement">Соглашение</Link></li>
             <li v-if="$page.props.auth.user && $page.props.auth.user.is_admin"><a href="/admin" target="_blank">Админка</a></li>
             <li v-if="$page.props.auth.user"><Link :href="route('logout')" method="get">Выйти</Link></li>

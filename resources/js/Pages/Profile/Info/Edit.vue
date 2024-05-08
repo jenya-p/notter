@@ -40,6 +40,9 @@ export default {
             <Tabs/>
             <div class="block-bordered">
                 <form @submit.prevent="form.patch(route('profile.update'))" class="form-wrapper">
+                    <p v-if="status" class="status1">
+                        {{ status }}
+                    </p>
                     <Field :errors="form.errors" for="name" label="Ваше имя или никнейм">
                         <input class="input input-user" v-model="form.name" placeholder="Имя">
                     </Field>
@@ -51,10 +54,10 @@ export default {
                 </form>
 
                 <p class="disclaimer">Нажимая "сохранить", вы соглашаетесь на 
-                    <Link href="">обработку персональных данных</Link>
+                    <a href="/agreement" target="_blank">обработку персональных данных</a>
                 </p>
 
-                <Link href="" class="remove-profile-link">Удалить аккаунт</Link>
+                <!-- <Link href="" class="remove-profile-link">Удалить аккаунт</Link> -->
 
             </div>
 
@@ -73,5 +76,11 @@ p.disclaimer {
 .remove-profile-link {
     color: #C83000;
     font-size: 14px;
+}
+
+.status1 {
+    font-weight: 600;
+    margin: 10px 0 12px;
+    font-size: 1.1em;
 }
 </style>

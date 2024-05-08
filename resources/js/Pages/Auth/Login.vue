@@ -51,14 +51,14 @@ const submit = () => {
                 class="forgot-password-link"
             >Забыли пароль?
             </Link>
-
+<!--
             <div class="hr">или</div>
             <h3>Вход через соц.сети:</h3>
             <div class="social-link-wrapper">
                 <a href="javascript:;"><img src="/images/social-google.svg" alt=""></a>
                 <a href="javascript:;"><img src="/images/social-vk.svg" alt=""></a>
                 <a href="javascript:;"><img src="/images/social-ya.svg" alt=""></a>
-            </div>
+            </div> -->
         </form>
 
         <div class="block" style="padding: 25px 35px;">

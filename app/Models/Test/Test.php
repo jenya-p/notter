@@ -19,6 +19,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property int $user_id
  * @property int $block_id
  * @property int $payment_id
+ * @property string $title
  * @property float $amount
  * @property Carbon $available_till
  * @property int $passing_score
@@ -44,6 +45,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property-read Payment $payment
  *
  * @method static Builder my()
+ * @method static Builder active()
  *
  * @mixin \Eloquent
  */
@@ -95,13 +97,6 @@ class Test extends Model {
         return $this->belongsTo(Payment::class);
     }
 
-    public static function scopeMy(Builder $query){
-        if(!empty(\Auth::id())){
-            return $query->where('user_id', '=', \Auth::id());
-        } else{
-            return $query->whereRaw('FALSE');
-        }
-    }
 
     public function getStatusAttribute(){
         if (!empty($this->completed_at)){
@@ -132,5 +127,26 @@ class Test extends Model {
     public function isAvailable(){
         return \Auth::id() == $this->user_id && !$this->available_till->endOfDay()->lessThanOrEqualTo(now());
     }
+
+    /**
+     * Тесты текущего пользователя
+     */
+    public static function scopeMy(Builder $query){
+
+        if(!empty(\Auth::id())){
+            return $query->where('user_id', '=', \Auth::id());
+        } else {
+            return $query->whereRaw('FALSE');
+        }
+    }
+
+
+    /**
+     * Тесты доступные в данный момент для прохождения
+     */
+    public static function scopeActive(Builder $query){
+        $query->where('available_till', '>=', now())->whereNull('completed_at');
+    }
+
 
 }

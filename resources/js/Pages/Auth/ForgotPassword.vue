@@ -41,7 +41,7 @@ const submit = () => {
             </div>
 
             <button type="submit" class="btn btn-green"
-                    :disabled="form.processing">Email Password Reset Link</button>
+                    :disabled="form.processing">Востановить пароль</button>
         </form>
     </GuestLayout>
 </template>

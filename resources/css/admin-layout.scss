@@ -272,6 +272,27 @@ aside {
                         }
                     }
                 }
+
+                &.with-notification a{
+                    position: relative;
+                    padding-right: 50px;
+                    .notification{
+                        position: absolute;
+                        right: 10px;
+                        top: 50%;
+                        margin-top: -10px;
+                        color: white;
+                        font-family: Inter;
+                        font-size: 12px;
+                        width: 20px;
+                        height: 20px;
+                        line-height: 20px;
+                        text-align: center;
+                        border-radius: 50%;
+                        background: $red;
+                    }
+                }
+
             }
         }
     }
@@ -548,6 +569,14 @@ button.btn-a {
             align-items: flex-start;
             flex-shrink: 0;
             padding-right: 10px;
+        }
+
+        :not(.vertical) &.field-display {
+            min-height: unset;
+            .input-label{
+                line-height: unset;
+            }
+
         }
 
         & > div {

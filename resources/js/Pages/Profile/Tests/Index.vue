@@ -49,7 +49,7 @@ export default {
         </div>
         <div class="block">
 
-            <div class="table-wrapper">
+            <div class="table-wrapper" v-if="items.length">
 
                 <table class="table">
                     <thead>
@@ -90,7 +90,10 @@ export default {
                 </table>
 
             </div>
-
+            <div v-else class="empty-table">
+                <p>В данный момент у вас нет активных тестов</p>
+                <Link href="/prices" class="btn btn-sm btn-green">Купить</Link>
+            </div>
 
         </div>
     </GuestLayout>

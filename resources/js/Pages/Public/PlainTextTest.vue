@@ -7,7 +7,7 @@
             <div class="block-bordered content-wrapper">
                 <div class="content">
                     <ul class="questionare">
-                        <li v-for="question of test.block.tickets[0].questions">
+                        <li v-for="question of test.block.questions">
                             {{ question.text }}
                         </li>
                     </ul>

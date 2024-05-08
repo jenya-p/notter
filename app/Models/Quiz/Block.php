@@ -29,11 +29,13 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  *
  * @property-read int     $ticket_count
  * @property-read int     $question_count
+ * @property-read Carbon  $available_till
  *
  * @property-read Question[] $questions
  * @property-read Test[] $tests
+ * @property-read Test[] $myActiveTests
  *
- * @method static active();
+ * @method static Builder active();
  *
  * @mixin \Eloquent
  */
@@ -91,29 +93,41 @@ class Block extends Model {
         return $query->where('active', '=', 1);
     }
 
+    public function myActiveTests(){
+        return $this->tests()->scopes(['my','active']);
+    }
+
+    public function getAvailableTillAttribute(){
+        return $this->myActiveTests()->max('available_till');
+    }
+
     public function createTest($data){
         /** @var Test $test */
         $test = $this->tests()->create($data);
 
-        $currentTicket = $this->questions[0]->ticket;
-        /** @var Ticket $Ticket */
-        $ticket = $test->tickets()->create();
+        if(!$this->is_plain_text){
+            $currentTicket = $this->questions[0]->ticket;
+            /** @var Ticket $Ticket */
+            $ticket = $test->tickets()->create();
 
-        foreach ($this->questions as $index => $question){
-            if($currentTicket !== $question->ticket){
-                $currentTicket = $question->ticket;
-                $ticket = $test->tickets()->create();
+            foreach ($this->questions as $index => $question){
+                if($currentTicket !== $question->ticket){
+                    $currentTicket = $question->ticket;
+                    $ticket = $test->tickets()->create();
+                }
+
+                $ticket->questions()->create([
+                    'quiz_question_id' =>  $question->id,
+                    'question' => $question->text,
+                    'description' => $question->description,
+                    'options' => $question->options,
+                    'right' => $question->right
+                ]);
+
             }
-
-            $ticket->questions()->create([
-                'quiz_question_id' =>  $question->id,
-                'question' => $question->text,
-                'description' => $question->description,
-                'options' => $question->options,
-                'right' => $question->right
-            ]);
-
         }
+
+
         return $test;
     }
 

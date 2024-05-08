@@ -36,6 +36,13 @@
                         <span>Контент</span>
                     </Link>
                 </li>
+                <li :class="{active: routeIs('backfeed'), 'with-notification': backfeeds > 0}">
+                    <Link :href="route('admin.backfeed.index')">
+                        <i class="fa fa-envelope"></i>
+                        <span>Обратная связь</span>
+                        <span class="notification" v-if="backfeeds > 0">{{ backfeeds }}</span>
+                    </Link>
+                </li>
             </ul>
         </div>
 
@@ -43,7 +50,7 @@
             <span class="username">{{ $page.props.auth.user.display_name }}</span>
             <div class="actions">
                 <Link :href="route('admin.user.edit', {user: $page.props.auth.user.id})" class="logout">Профиль</Link>
-                <Link :href="route('logout')" class="btn-a logout" method="get">Выход</Link>
+                <a :href="route('logout')" class="btn-a logout">Выход</a>
             </div>
         </div>
 
@@ -77,6 +84,11 @@ export default {
                 }
             }
             return false;
+        }
+    },
+    computed: {
+        backfeeds(){
+            return this.$page.props.notifications.backfeed;
         }
     }
 }

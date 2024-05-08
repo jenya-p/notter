@@ -56,7 +56,7 @@ const submit = () => {
             </div>
 
             <div class="input-group" :class="{'has-error': form.errors.confirm}">
-                <Checkbox v-model="form.confirm" class="confirm-checkbox">Я принимаю условия <a href="javascript:;">пользовательского соглашения</a></Checkbox>
+                <Checkbox v-model="form.confirm" class="confirm-checkbox">Я принимаю условия <a href="/agreement" target="_blank">пользовательского соглашения</a></Checkbox>
                 <input-error :message="form.errors.confirm"/>
             </div>
 

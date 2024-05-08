@@ -15,7 +15,8 @@ class PasswordController extends Controller
 
     public function edit(Request $request){
         return Inertia::render('Profile/Info/Password', [
-            'user' => Auth::user()
+            'user' => Auth::user(),
+            'status' => session('status'),
         ]);
     }
 
@@ -26,13 +27,13 @@ class PasswordController extends Controller
     {
         $validated = $request->validate([
             'current_password' => ['required', 'current_password'],
-            'password' => ['required', Password::defaults(), 'confirmed'],
+            'password' => ['required', Password::min(6), 'confirmed'],
         ]);
 
         $request->user()->update([
             'password' => Hash::make($validated['password']),
         ]);
 
-        return back();
+        return back()->with('status', 'Пароль успешно изменен');
     }
 }

@@ -16,11 +16,11 @@ class TestsController extends Controller {
         if ($test->user_id !== \Auth::id()) {
             return abort(403, 'Not Available');
         }
+        $test->load('block:id,title,is_plain_text');
 
         if ($test->block->is_plain_text) {
             $test->load(
-                'block:id,title',
-                'block.questions:id,ticket,order,text,description',
+                'block.questions:id,block_id,ticket,order,text,description',
             );
 
             return Inertia::render('Public/PlainTextTest', [

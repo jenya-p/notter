@@ -35,10 +35,19 @@ class InfoController extends Controller
         if ($request->user()->isDirty('email')) {
             $request->user()->email_verified_at = null;
         }
+        if(empty($request->user()->name)){
+            $request->user()->name = '';
+        }
 
         $request->user()->save();
 
-        return Redirect::route('profile.edit');
+        return Redirect::route('profile.edit')->with('status', 'Данные успешно изменены');
+    }
+
+    public function password(Request $request){
+        $request->validate([
+            'password' => ['required', 'current_password'],
+        ]);
     }
 
     /**

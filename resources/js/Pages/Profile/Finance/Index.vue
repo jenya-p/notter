@@ -10,6 +10,9 @@ export default {
         user: {
             type: Object,
         },
+        items: {
+            type: Array, default: []
+        }
     },
     data: () => {
         let user = usePage().props.auth.user;
@@ -37,7 +40,7 @@ export default {
                 <span>История операций</span>
             </div>
 
-            <div class="table-wrapper">
+            <div class="table-wrapper" v-if="!items.length">
 
 
                 <table class="table">
@@ -63,6 +66,10 @@ export default {
                     </tbody>
                 </table>
 
+            </div>
+            <div v-else class="empty-table">
+                <p>В данный момент у вас нет активных тестов</p>
+                <Link href="/prices" class="btn btn-sm btn-green">Купить</Link>
             </div>
         </div>
     </GuestLayout>

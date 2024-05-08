@@ -27,6 +27,10 @@ class User extends Authenticatable
 {
     use HasFactory, Notifiable;
 
+
+    // TODO Ограничить доступ к админке для неадминов
+
+
     /**
      * The attributes that are mass assignable.
      *

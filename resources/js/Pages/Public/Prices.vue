@@ -9,9 +9,24 @@
                     <div v-html="item.description" class="content"></div>
                 </div>
                 <div class="item-right">
-                    <div class="price">{{ $filters.currency(item.price, 'auto') }} руб.</div>
-                    <p class="price-description">доступ на 1 месяц со дня покупки</p>
-                    <a @click="submit([item.id])" class="btn btn-sm btn-green-dark btn-buy">Купить</a>
+                    <template v-if="item.available_till && item.my_active_tests.length == 1">
+                        <p>Тестирование доступно <span class="nobr">до <span
+                            class="font-inter">{{ date(item.available_till, 'dd MMM yyyy') }}</span></span></p>
+                        <Link :href="route('test', {test: item.my_active_tests[0].id})" class="btn btn-sm btn-green-dark btn-buy">Пройти</Link>
+                    </template>
+                    <template v-else-if="item.my_active_tests.length">
+                        <p>Доступно {{ item.my_active_tests.length }}
+                            {{ plural(item.my_active_tests.length, 'тестирование', 'тестирования', 'тестирований') }} <span
+                                class="nobr">до <span class="font-inter">{{
+                                    date(item.available_till, 'dd MMM yyyy')
+                                }}</span></span></p>
+                        <Link :href="route('test', {test: item.id})" class="btn btn-sm btn-green-dark btn-buy">Мои тесты</Link>
+                    </template>
+                    <template v-else>
+                        <div class="price">{{ $filters.currency(item.price, 'auto') }} руб.</div>
+                        <p class="price-description">доступ на 1 месяц со дня покупки</p>
+                        <a @click="submit([item.id])" class="btn btn-sm btn-green-dark btn-buy">Купить</a>
+                    </template>
                 </div>
             </div>
 
@@ -38,10 +53,11 @@
 <script>
 import GuestLayout from "@/Layouts/GuestLayout.vue";
 import Checkbox from "@/Components/Checkbox.vue";
-import {router} from "@inertiajs/vue3";
-
+import {router, Link} from "@inertiajs/vue3";
+import date from "@/Filters/date.js"
+import plural from "@/Filters/plural.js";
 export default {
-    components: {GuestLayout, Checkbox},
+    components: {GuestLayout, Checkbox, Link},
     props: {
         blocks: {type: Array}
     },
@@ -67,7 +83,9 @@ export default {
     methods: {
         submit(ids){
             router.get(route('purchase.create'), {ids: ids});
-        }
+        },
+        date: date,
+        plural: plural
     }
 
 }
