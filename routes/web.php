@@ -69,19 +69,5 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => ['auth', 'c
 
 });
 
-
-Route::get('tst.html', function(){
-
-    $msg = (new \Illuminate\Notifications\Messages\MailMessage())
-        ->subject(Lang::get('Reset Password Notification'))
-        ->line(Lang::get('You are receiving this email because we received a password reset request for your account.'))
-        ->action(Lang::get('Reset Password'), 'asdasdasd')
-        ->line(Lang::get('This password reset link will expire in :count minutes.', ['count' => config('auth.passwords.'.config('auth.defaults.passwords').'.expire')]))
-        ->line(Lang::get('If you did not request a password reset, no further action is required.'));
-
-    echo $msg->render(); die;
-
-});
-
 require __DIR__.'/auth.php';
 
