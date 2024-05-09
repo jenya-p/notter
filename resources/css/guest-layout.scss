@@ -156,6 +156,7 @@ header{
         opacity: 1;
         transform: none;
         pointer-events: all;
+        z-index: 100;
     }
     li{
         border-bottom: 1px solid transparent;
