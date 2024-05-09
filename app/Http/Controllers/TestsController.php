@@ -99,7 +99,7 @@ class TestsController extends Controller {
         foreach ($test->tickets as $ticket) {
             $ticket->loadInfo($test->status == Test::STATUS_ACTIVE);
         }
-
+        $test->updateCounters();
         return Inertia::render('Public/Test', [
             'ticketIndex' => $ticketIndex,
             'questionIndex' => $questionIndex,
@@ -120,9 +120,10 @@ class TestsController extends Controller {
 
         $question->update([
             'answer' => intval($request->answer),
-            'solvede_at' => now()
+            'solved_at' => now()
         ]);
 
+        $question->ticket->start();
         $question->ticket->test->updateCounters();
 
         return ['result' => 'ok'];
@@ -134,13 +135,9 @@ class TestsController extends Controller {
             return abort(403, 'Not Available');
         }
 
-        $question->update(['answer' => null,
-            'solved_at' => null]);
+        $question->update(['answer' => null,'solved_at' => null]);
 
-        if (empty($question->ticket->started_at)) {
-            $question->ticket->started_at = now();
-        }
-
+        $question->ticket->start();
         $question->ticket->test->updateCounters();
 
         return ['result' => 'ok'];
@@ -156,6 +153,9 @@ class TestsController extends Controller {
         if($ticket->test->tickets()->whereNull('completed_at')->count() == 0){
             $ticket->test->update(['completed_at' => now()]);
         }
+
+        $ticket->start();
+        $ticket->test->updateCounters();
 
         return [
             'result' => 'ok',

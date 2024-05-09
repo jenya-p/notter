@@ -14,15 +14,15 @@
                 </li>
                 <li :class="{active: routeIs('block', 'question')}">
                     <Link :href="route('admin.block.index')">
-                        <i class="fa fa-list-check"/>
-                        <span>Тесты</span>
+                        <i class="fa-regular fa-folder-open"></i>
+                        <span>Блоки вопросов</span>
                     </Link>
                 </li>
-                <li>
-                    <span>
-                        <i class="fa-regular fa-folder-open"/>
-                        <span>Результаты</span>
-                    </span>
+                <li :class="{active: routeIs('test')}">
+                    <Link :href="route('admin.test.index')">
+                        <i class="fa fa-list-check"/>
+                        <span>Тестирования</span>
+                    </Link>
                 </li>
                 <li>
                     <span>

@@ -13,6 +13,7 @@ import date from "@/Filters/date";
 import phone from "@/Filters/phone";
 /* import {tabs, tab} from '@/Components/tabs.js'; */
 import "vue-multiselect/dist/vue-multiselect.css";
+import VueMask from "@devindex/vue-mask";
 
 const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
 
@@ -24,6 +25,7 @@ createInertiaApp({
         app.config.globalProperties.$filters = {currency: currency, plural: plural, htmlize: htmlize, date: date, phone: phone};
         app.use(plugin)
             .use(ZiggyVue)
+            .use(VueMask)
             .directive("field-container", fieldContainer)
             // .component('tabs', tabs)
             // .component('tab', tab)

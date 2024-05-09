@@ -62,6 +62,7 @@ export default {
 
         async skip() {
             if (this.question.answer === null) {
+                console.log(1)
                 this.next();
             } else {
                 let result = await axios.delete(route('test.skip', {question: this.question.id}));
@@ -75,7 +76,7 @@ export default {
         },
 
         async next() {
-            if(this.isAllResolved()){
+            if(this.isAllResolved(this.questions[this.index - 1])){
                 this.complete();
             } else if (this.index === this.questions.length) {
                 this.findUnresolvedQuestion();
@@ -94,9 +95,9 @@ export default {
         questionClasses(index) {
             return {green: this.questions[index - 1].answer !== null};
         },
-        isAllResolved(){
+        isAllResolved(except = null){
             for (const question of this.questions) {
-                if(question.answer === null){
+                if(question.answer === null && (except == null || except.id !== question.id)){
                     return false;
                 }
             }

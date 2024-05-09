@@ -66,10 +66,7 @@ export default {
         item: {
             type: Object,
             default: null
-        },
-        role_options: {
-            type: Array,
-        },
+        }
     },
 
     data() {

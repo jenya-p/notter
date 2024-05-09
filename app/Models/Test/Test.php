@@ -38,6 +38,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property Carbon $deleted_at
  *
  * @property-read int $question_skipped_count
+ * @property-read string $status
+ * @property-read string $status_name
  *
  * @property-read User $user
  * @property-read Block $block
@@ -57,6 +59,14 @@ class Test extends Model {
     const STATUS_DONE = 'done';
     const STATUS_ACTIVE = 'active';
     const STATUS_FINISHED = 'finished';
+    const STATUS_UNAVAILABLE='unavailable';
+
+    const STATUSES = [
+        self::STATUS_DONE => 'Пройден',
+        self::STATUS_ACTIVE => 'Активный',
+        self::STATUS_FINISHED => 'Завершен',
+        self::STATUS_UNAVAILABLE => 'Недоступно'
+    ];
 
     protected $fillable = [
         'user_id','block_id','payment_id','title','available_till','amount','passing_score',
@@ -68,7 +78,7 @@ class Test extends Model {
 
     protected $casts = [
         'order' => 'integer',
-        'available_till' => 'date',
+        'available_till' => 'date:Y-m-d',
         'amount' => 'float',
         'passing_score' => 'integer',
         'completed_at' => 'datetime',
@@ -101,6 +111,8 @@ class Test extends Model {
     public function getStatusAttribute(){
         if (!empty($this->completed_at)){
             return self::STATUS_DONE;
+        } else if(empty($this->available_till)){
+            return self::STATUS_UNAVAILABLE;
         } else if(
             $this->available_till->endOfDay()->lessThanOrEqualTo(now())
         ){
@@ -110,11 +122,44 @@ class Test extends Model {
         }
     }
 
+    public function getStatusNameAttribute(){
+        if(array_key_exists($this->status, self::STATUSES)){
+            return self::STATUSES[$this->status];
+        } else {
+            return $this->status;
+        }
+    }
+
+
     public function getQuestionSkippedCountAttribute(){
         return $this->question_count - $this->question_right_count - $this->question_wrong_count;
     }
 
     public function updateCounters(){
+        $this->ticket_count = $this->tickets()->count();
+        $this->question_count = $this->questions()->count();
+        $this->ticket_failed_count = 0;
+        $this->ticket_passed_count = 0;
+        $tickets = $this->tickets()->whereNotNull('completed_at')->get();
+        /** @var Ticket $ticket */
+        foreach ($tickets as $ticket){
+            if($this->passing_score == null){
+                $count = $ticket->questions()->whereRaw('(`right` != `answer` or `answer` is null)')->count();
+                if($count == 0){
+                    $this->ticket_passed_count++;
+                } else {
+                    $this->ticket_failed_count++;
+                }
+            } else {
+                $count = $ticket->questions()->whereRaw('(`right` = `answer` and not `answer` is null)')->count();
+                if($count >= $this->passing_score){
+                    $this->ticket_passed_count++;
+                } else {
+                    $this->ticket_failed_count++;
+                }
+            }
+        }
+
         $this->question_right_count = $this->questions()->whereRaw('`right` = `answer`')->whereNotNull('answer')->count();
         $this->question_wrong_count = $this->questions()->whereRaw('`right` != `answer`')->whereNotNull('answer')->count();
         $this->save();

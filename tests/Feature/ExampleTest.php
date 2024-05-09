@@ -6,6 +6,7 @@ namespace Tests\Feature;
 use App\Models\Quiz\Block;
 use App\Models\Quiz\Question;
 use App\Models\Test\Test;
+use App\Models\Test\Ticket;
 use App\Models\User;
 use Illuminate\Support\Facades\Password;
 use Laravel\Sanctum\Sanctum;
@@ -21,7 +22,8 @@ class ExampleTest extends TestCase
         \Auth::login(User::find(2));
 
 
-
+        $test = Test::find(11);
+        $test->updateCounters();
 
     }
 

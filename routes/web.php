@@ -51,6 +51,7 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => ['auth', 'c
         return redirect()->route('admin.user.index');
     })->name('dashboard');
 
+    Route::get('user/suggest', [\App\Http\Controllers\Admin\UserController::class, 'suggest'])->name('user.suggest');
     Route::resource('user', \App\Http\Controllers\Admin\UserController::class)
         ->except(['destroy', 'show']);
     Route::resource('content', \App\Http\Controllers\Admin\ContentController::class)
@@ -65,6 +66,9 @@ Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => ['auth', 'c
         ->except(['show', 'index']);
 
     Route::resource('backfeed', \App\Http\Controllers\Admin\BackfeedController::class)
+        ->except(['show', 'create', 'store']);
+
+    Route::resource('test', \App\Http\Controllers\Admin\TestController::class)
         ->except(['show']);
 
 });

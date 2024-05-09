@@ -57,6 +57,10 @@ class BackfeedController extends Controller
 
     }
 
+    public function destroy(Backfeed $backfeed) {
+        $backfeed->delete();
+        return ['result' => 'ok'];
+    }
 
 
 }

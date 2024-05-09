@@ -54,6 +54,11 @@ class Ticket extends Model {
         return $this->completed_at === null && $this->test->isAvailable();
     }
 
+    public function start(){
+        if($this->started_at == null){
+            $this->update(['started_at' => now()]);
+        }
+    }
 
     public function loadInfo($isTestActive = true){
         if($this->completed_at!==null){
@@ -73,10 +78,10 @@ class Ticket extends Model {
                 }
             }
 
-            if(empty($test->passing_score)){
-                $result = $this->right_count >= $this->question_count;
+            if(empty($this->test->passing_score)){
+                $result = $this->right_count >= $this->test->question_count;
             } else{
-                $result = $this->right_count >= $this->passing_score;
+                $result = $this->right_count >= $this->test->passing_score;
             }
             $this->result = $result ? 'passed' : 'failed';
         } else if($isTestActive){

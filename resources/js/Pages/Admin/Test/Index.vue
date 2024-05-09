@@ -6,43 +6,61 @@
             <div class="simple-list-filter-wrp">
                 <input type="text" class="input" placeholder="Поиск по пользователю и теме"
                        v-model.lazy="filter">
+                <Link :href="route('admin.test.create')" class="btn btn-sm btn-primary ">
+                    <i class="fa fa-plus" style="font-size: 0.8em; margin-right: 8px"></i>Добавить
+                </Link>
             </div>
 
             <table class="table">
                 <thead class=" text-primary">
                 <tr>
-
+                    <th class="id">
+                        <sort name="id" v-model="sort">№</sort>
+                    </th>
                     <th class="name">
-                        <sort name="name" v-model="sort">Пользователь</sort>
+                        <sort name="user" v-model="sort">Пользователь</sort>
                     </th>
-
-                    <th class="subject">
-                        <sort name="subject" v-model="sort">Тестирование</sort>
+                    <th class="title">
+                        <sort name="title" v-model="sort">Блок</sort>
                     </th>
+                    <th class="status">Статус</th>
+                    <th class="process">Пройдено</th>
                     <th class="created_at">
-                        <sort name="created_at" v-model="sort">Дата</sort>
+                        <sort name="created_at" v-model="sort">Создано</sort>
                     </th>
-                    <th class="td-actions text-right">
+                    <th class="available_till">
+                        <sort name="available_till" v-model="sort">Доступно до</sort>
+                    </th>
 
-                    </th>
                 </tr>
                 </thead>
                 <tbody>
                 <tr v-for="item of items.data" @click="itemClick(item)" class="cursor-pointer">
-                    <td  class="user">
-                        {{ item.user.email }}
-                        <div v-if="item.email" class="secondary">{{item.name}}</div>
+                    <td>
+                        {{item.id}}
+                    </td>
+                    <td class="user">
+                        <div class="primary">{{ item.user.email }}</div>
+                        <div v-if="item.user.display_name != ''" class="secondary">{{ item.user.name }}</div>
                     </td>
                     <td class="title">
-                        <i v-if="item.title" class="fa fa-paperclip" :title="item.attachment_count + ' вложений'"/>
+                        {{ item.title }}
                     </td>
-
-                    <td  class="created_at">
+                    <td class="status">
+                        <span class="badge" :class="'badge-' + item.status">{{ item.status_name }}</span>
+                    </td>
+                    <td class="process">
+                        {{item.ticket_count !== 0 ? Math.round(100 * (item.ticket_passed_count + item.ticket_failed_count) / item.ticket_count) + ' %' : ''}}
+                    </td>
+                    <td class="created_at">
+                        <span class="primary">{{
+                            $filters.date(item.created_at, 'dd MMM yyyy HH:mm')
+                        }}</span>
+                    </td>
+                    <td class="created_at">
                         {{
-                            $filters.date(item.created_at)
+                            item.available_till ? $filters.date(item.available_till, 'dd MMM yyyy') : ''
                         }}
-                    </td>
-                    <td class="td-actions text-right">
                     </td>
                 </tr>
                 </tbody>
@@ -53,7 +71,6 @@
             </table-bottom>
 
         </div>
-
 
 
     </AdminLayout>
@@ -69,7 +86,6 @@ import _isArray from "lodash/isArray";
 import TableBottom from "@/Components/TableBottom.vue";
 
 
-
 export default {
     components: {TableBottom, Sort, Paginator, Link, AdminLayout},
     props: {
@@ -78,22 +94,22 @@ export default {
     data() {
         let u = new URLSearchParams(document.location.search);
         let page = u.get('page');
-        if(page == null){
+        if (page == null) {
             page = 1;
         }
         let filter = u.get('filter');
         let sort = u.get('sort');
 
-        if(sort != null){
+        if (sort != null) {
             sort = sort.split(':');
-            if(_isArray(sort) && sort.length == 2){
+            if (_isArray(sort) && sort.length == 2) {
                 sort = {name: sort[0], dir: sort[1]};
             } else {
                 sort = null;
             }
         }
 
-        return{
+        return {
             page: 1,
             sort: sort,
             filter: filter
@@ -101,9 +117,9 @@ export default {
     },
     methods: {
         itemClick: function (item) {
-            this.$inertia.visit(route('admin.backfeed.edit', {backfeed: item.id}))
+            this.$inertia.visit(route('admin.test.edit', {test: item.id}))
         },
-        refreshPage: _debounce(function(){
+        refreshPage: _debounce(function () {
             var $v = this;
             let sort = this.sort ? (this.sort.name + ':' + this.sort.dir) : '';
             this.$inertia.reload({
@@ -119,48 +135,49 @@ export default {
         })
     },
     watch: {
-        page(){
+        page() {
             this.refreshPage();
         },
-        filter(){
+        filter() {
             this.page = 1;
             this.refreshPage();
         },
-        sort(){
+        sort() {
             this.page = 1;
             this.refreshPage();
         },
     },
 
 
-
-
 }
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 @import "resources/css/admin-vars";
-.table{
-    td,th {
-        &.name{
+
+.table {
+    td, th {
+        .secondary {
+            color: $lightForeColor;
+            font-size: 0.8em;
+        }
+
+        &.user {
             width: 200px;
         }
-        &.email{
-            width: 200px;
-        }
-        &.subject{
+
+
+        &.title {
 
         }
-        &.created_at{
+
+        &.created_at, &.available_till {
             width: 150px;
         }
-        &.attachments{
-            width: 20px; text-align: right;
-            color: $lightForeColor
-        }
-        &.status{
+
+        &.status {
             width: 20px;
-            i{
+            i {
                 display: inline-block;
                 color: white;
                 font-family: Inter;
@@ -173,7 +190,38 @@ export default {
                 background: $red;
             }
         }
+        &.process {
+            text-align: center;
+        }
     }
+
+
+    .badge {
+
+        font-size: 0.8em;
+        background: #f0f0f0;
+        padding: 2px 5px;
+        border-radius: 3px;
+        &-active {
+            color: white;
+            background: $green;
+        }
+        &-finished {
+            color: #8b8b8b;
+            background: #fffccf;
+        }
+        &-done {
+            color: $green;
+        }
+        &-unavailable {
+            background: #505050;
+            color: #e0e0e0;
+        }
+    }
+
+
+
+
 }
 </style>
 

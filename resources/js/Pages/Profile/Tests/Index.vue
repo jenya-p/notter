@@ -65,17 +65,17 @@ export default {
                     <tr @click="goTo(item)" href="" v-for="item of items">
                         <td class="m-title">{{item.title}}</td>
                         <td class="font-inter date">
-                            <span class="m-label">Действует до: </span><span class="nobr">{{ $filters.date(item.available_till, 'dd MMM yyyy') }}</span></td>
+                            <span class="m-label">Действует до: </span><span class="nobr">{{ item.available_till ? $filters.date(item.available_till, 'dd MMM yyyy'): '' }}</span></td>
 
                         <template v-if="item.question_count">
-                            <td class="color-green font-inter d-only nobr w-10">{{ item.right_count }}
-                                ({{Math.round(100 * item.right_count / item.question_count)}}%)</td>
-                            <td class="color-red font-inter d-only nobr">{{ item.wrong_count }}
-                                ({{Math.round(100 * item.wrong_count / item.question_count)}}%)</td>
+                            <td class="color-green font-inter d-only nobr w-10">{{ item.question_right_count }}
+                                ({{Math.round(100 * item.question_right_count / item.question_count)}}%)</td>
+                            <td class="color-red font-inter d-only nobr">{{ item.question_wrong_count }}
+                                ({{Math.round(100 * item.question_wrong_count / item.question_count)}}%)</td>
                             <td class="m-only font-inter">
                                 <span class="m-label">Статистика: </span>
-                                <span class="color-green">{{ item.right_count }} ({{Math.round(100 * item.right_count / item.question_count)}}%)</span> /
-                                <span class="color-red">{{ item.wrong_count }} {{Math.round(100 * item.wrong_count / item.question_count)}}%)</span>
+                                <span class="color-green">{{ item.question_right_count }} ({{Math.round(100 * item.question_right_count / item.question_count)}}%)</span> /
+                                <span class="color-red">{{ item.question_wrong_count }} {{Math.round(100 * item.question_wrong_count / item.question_count)}}%)</span>
                             </td>
                         </template>
                         <template v-else>

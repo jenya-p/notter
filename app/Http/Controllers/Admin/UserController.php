@@ -96,4 +96,17 @@ class UserController extends Controller
         return \Redirect::route('admin.user.edit', ['user' => \Auth::id()]);
 
     }
+
+    public function suggest(Request $request){
+        $query = User::query();
+        $filter = trim($request->filter);
+        if(!empty($filter)){
+            $lcQuery = '%' . mb_strtolower(trim($filter)) . '%';
+            $query->whereRaw('name like ? or email like ?', [$lcQuery,$lcQuery]);
+        }
+
+        $query->orderBy('name', 'asc')->limit(10);
+        return $query->get(['id', 'name', 'email']);
+    }
+
 }

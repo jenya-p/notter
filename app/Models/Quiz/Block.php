@@ -126,8 +126,7 @@ class Block extends Model {
 
             }
         }
-
-
+        $test->updateCounters();
         return $test;
     }
 

@@ -29,7 +29,6 @@
                         <sort name="created_at" v-model="sort">Дата</sort>
                     </th>
                     <th class="td-actions text-right">
-
                     </th>
                 </tr>
                 </thead>
@@ -38,24 +37,26 @@
                     <td class="status">
                         <i v-if="item.status == 'new'"></i>
                     </td>
-                    <td  class="name">
+                    <td class="name">
                         {{ item.name }}
                     </td>
-                    <td  class="email">
+                    <td class="email">
                         {{ item.email }}
                     </td>
                     <td class="attachments">
-                        <i v-if="item.attachment_count" class="fa fa-paperclip" :title="item.attachment_count + ' вложений'"/>
+                        <i v-if="item.attachment_count" class="fa fa-paperclip"
+                           :title="item.attachment_count + ' вложений'"/>
                     </td>
-                    <td  class="subject">
-                        <span>{{item.subject}}</span>
+                    <td class="subject">
+                        <span>{{ item.subject }}</span>
                     </td>
-                    <td  class="created_at">
+                    <td class="created_at">
                         {{
                             $filters.date(item.created_at)
                         }}
                     </td>
                     <td class="td-actions text-right">
+                        <a class="fa fa-times btn-remove" @click.stop="remove(item)"></a>
                     </td>
                 </tr>
                 </tbody>
@@ -66,7 +67,6 @@
             </table-bottom>
 
         </div>
-
 
 
     </AdminLayout>
@@ -82,7 +82,6 @@ import _isArray from "lodash/isArray";
 import TableBottom from "@/Components/TableBottom.vue";
 
 
-
 export default {
     components: {TableBottom, Sort, Paginator, Link, AdminLayout},
     props: {
@@ -91,22 +90,22 @@ export default {
     data() {
         let u = new URLSearchParams(document.location.search);
         let page = u.get('page');
-        if(page == null){
+        if (page == null) {
             page = 1;
         }
         let filter = u.get('filter');
         let sort = u.get('sort');
 
-        if(sort != null){
+        if (sort != null) {
             sort = sort.split(':');
-            if(_isArray(sort) && sort.length == 2){
+            if (_isArray(sort) && sort.length == 2) {
                 sort = {name: sort[0], dir: sort[1]};
             } else {
                 sort = null;
             }
         }
 
-        return{
+        return {
             page: 1,
             sort: sort,
             filter: filter
@@ -116,7 +115,7 @@ export default {
         itemClick: function (item) {
             this.$inertia.visit(route('admin.backfeed.edit', {backfeed: item.id}))
         },
-        refreshPage: _debounce(function(){
+        refreshPage: _debounce(function () {
             var $v = this;
             let sort = this.sort ? (this.sort.name + ':' + this.sort.dir) : '';
             this.$inertia.reload({
@@ -129,23 +128,30 @@ export default {
                     sort: sort
                 }
             });
-        })
+        }),
+        async remove(item) {
+            let index = this.items.data.findIndex(itm => itm.id === item.id);
+            let result = await axios.delete(route('admin.backfeed.destroy', {backfeed: item.id}));
+            if (result.data.result == 'ok') {
+                this.items.data.splice(index,1);
+            } else {
+                alert('Что-то пошло не так. Обновите страницу, пожалуйста, или обратитесь к администратору');
+            }
+        },
     },
     watch: {
-        page(){
+        page() {
             this.refreshPage();
         },
-        filter(){
+        filter() {
             this.page = 1;
             this.refreshPage();
         },
-        sort(){
+        sort() {
             this.page = 1;
             this.refreshPage();
         },
     },
-
-
 
 
 }
@@ -153,27 +159,35 @@ export default {
 
 <style lang="scss">
 @import "resources/css/admin-vars";
-.table{
-    td,th {
-        &.name{
+
+.table {
+    td, th {
+        &.name {
             width: 200px;
         }
-        &.email{
+
+        &.email {
             width: 200px;
         }
-        &.subject{
+
+        &.subject {
 
         }
-        &.created_at{
+
+        &.created_at {
             width: 150px;
         }
-        &.attachments{
-            width: 20px; text-align: right;
+
+        &.attachments {
+            width: 20px;
+            text-align: right;
             color: $lightForeColor
         }
-        &.status{
+
+        &.status {
             width: 20px;
-            i{
+
+            i {
                 display: inline-block;
                 color: white;
                 font-family: Inter;
@@ -185,6 +199,10 @@ export default {
                 border-radius: 50%;
                 background: $red;
             }
+        }
+        &.td-actions{
+            width: 40px;
+            text-align: center;
         }
     }
 }
