@@ -8,15 +8,8 @@ use Inertia\Middleware;
 
 class HandleInertiaRequests extends Middleware {
 
-    // TODO https://stackoverflow.com/questions/66679747/using-2-different-blade-root-template-for-vue-with-laravel-8-and-inertia
 
-    /**
-     * The root template that is loaded on the first page visit.
-     *
-     * @var string
-     */
     protected $rootView = 'app';
-
 
     public function version(Request $request) {
         return $this->rootView . parent::version($request);
