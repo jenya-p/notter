@@ -811,8 +811,9 @@ body.green-decorator{
 }
 
 body:not(.green-decorator) {
-    background: white url("/images/bg.png") center 92px no-repeat;
+    background: white url(/images/bg.png) center center no-repeat;
     background-size: cover;
+    background-attachment: fixed;
     footer ul li a{color: #666;}
 }
 
