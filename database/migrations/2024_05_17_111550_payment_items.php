@@ -14,6 +14,10 @@ return new class extends Migration {
             $table->dropColumn('type');
             $table->dropColumn('method');
         });
+
+        DB::statement("ALTER TABLE `payments`
+	CHANGE COLUMN `external_id` `external_id` VARCHAR(512) NULL DEFAULT NULL COLLATE 'utf8_general_ci' AFTER `payed_at`;");
+
     }
 
     public function down(): void {
