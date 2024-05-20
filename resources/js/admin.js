@@ -11,9 +11,9 @@ import plural from "@/Filters/plural.js";
 import htmlize from "@/Filters/htmlize.js";
 import date from "@/Filters/date";
 import phone from "@/Filters/phone";
-/* import {tabs, tab} from '@/Components/tabs.js'; */
 import "vue-multiselect/dist/vue-multiselect.css";
 import VueMask from "@devindex/vue-mask";
+import isMobileMixin from "@/Components/is-mobile-mixin.js";
 
 const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
 
@@ -26,6 +26,7 @@ createInertiaApp({
         app.use(plugin)
             .use(ZiggyVue)
             .use(VueMask)
+            .mixin(isMobileMixin)
             .directive("field-container", fieldContainer)
             // .component('tabs', tabs)
             // .component('tab', tab)

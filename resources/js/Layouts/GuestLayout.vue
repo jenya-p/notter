@@ -73,7 +73,7 @@ export default {
 
                 <ul class="sidebar-menu">
                     <li>
-                        <Link  v-if="$page.props.auth.user" href="/profile/test">Тесты</Link>
+                        <Link  v-if="$page.props.auth.user" href="/profile-test">Тесты</Link>
                         <Link  v-else href="/prices">Тесты</Link>
                     </li>
                     <li><Link href="/prices">Цены</Link></li>
@@ -86,7 +86,7 @@ export default {
                 </div>
                 <ul class="header-menu">
                     <li>
-                        <Link  v-if="$page.props.auth.user" href="/profile/test">Тесты</Link>
+                        <Link  v-if="$page.props.auth.user" href="/profile-test">Тесты</Link>
                         <Link  v-else href="/prices">Тесты</Link>
                     </li>
                     <li><Link href="/prices">Цены</Link></li>
@@ -100,7 +100,7 @@ export default {
                         <ul class="header-popup-menu" ref="headerPopupMenu" v-click-outside="closePopupMenu" style="display: none">
                             <li v-if="$page.props.auth.user && $page.props.auth.user.is_admin" class="admin"><a href="/admin" target="_blank">Админка</a></li>
                             <li><Link :href="route('profile-test.index')">Мои тесты</Link></li>
-                            <li><Link :href="route('profile-finance.index')">Финансы</Link></li>
+                            <li><Link :href="route('profile-payment.index')">Финансы</Link></li>
                             <li><Link :href="route('profile.edit')">Профиль</Link></li>
                             <li><Link :href="route('logout')" method="get">Выйти</Link></li>
                         </ul>

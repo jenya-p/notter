@@ -76,17 +76,25 @@ export default {
     &.fixed {
         position: fixed;
         bottom: 0;
-        left: 330px;
-        right: 20px;
-
         z-index: 100;
-        padding: 20px 20px;
-
         background: white;
-        /* border-top: 1px solid $border-color; */
-        border-left: 1px solid $border-color;
-        border-right: 1px solid $border-color;
         box-shadow: 0px -18px 16px -15px rgba(0, 0, 0, 0.0705882353);
+
+        @include desktop{
+            left: 330px;
+            right: 20px;
+            border-left: 1px solid $border-color;
+            border-right: 1px solid $border-color;
+            padding: 20px 20px;
+            aside.min+main &{
+                left: 80px
+            }
+        }
+        @include mobile{
+            left: 0;
+            right: 0;
+            padding: 10px;
+        }
 
     }
 }

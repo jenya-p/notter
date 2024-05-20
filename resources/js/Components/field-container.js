@@ -3,6 +3,11 @@
 
 let refresh = function (el) {
     let p = el.clientWidth >= 800;
+    if(p){
+        el.classList.remove('vertical');
+    } else {
+        el.classList.add('vertical');
+    }
     return function(){
         if (el.clientWidth < 800) {
             if (p) {
@@ -21,7 +26,6 @@ let refresh = function (el) {
 export default {
     mounted: (el, binding) => {
         window.addEventListener('resize', refresh(el));
-        refresh(el)();
     },
     unmounted: (el, binding) => {
         window.removeEventListener('resize', refresh(el));

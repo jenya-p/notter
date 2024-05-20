@@ -22,16 +22,18 @@
             </VueMultiselect>
         </div>
 
-        <input type="text" class="input" placeholder="Поиск по тексту вопроса"
-               v-model="lItems.filter">
-        <a class="fa fa-eraser filter-erase" @click="lItems.filter = ''" title="Очистить"></a>
+        <div class="query-wrp">
+            <input type="text" class="input" placeholder="Поиск по тексту вопроса"
+                   v-model="lItems.filter">
+            <a class="fa fa-eraser filter-erase" @click="lItems.filter = ''" title="Очистить"></a>
+        </div>
         <Link :href="route('admin.question.create', {block_id: this.item.id})" class="btn btn-sm btn-primary ">
             <i class="fa fa-plus" style="font-size: 0.8em; margin-right: 8px"></i>Добавить
         </Link>
     </div>
 
     <table class="table" v-if="filtered">
-        <thead class=" text-primary">
+        <thead class="m-hide">
         <tr>
             <th class="to-center">Билет</th>
             <th class="to-center order">№п/п</th>
@@ -42,19 +44,23 @@
         </thead>
         <tbody>
         <tr v-for="element of lItems.items" @click="itemClick(element)" class="cursor-pointer">
-            <td class="to-center">
+            <td class="d-hide m-title">
+                {{ element.text }}
+                <a class="fa fa-times btn-remove" @click.stop="remove(element)"></a>
+            </td>
+            <ttd class="to-center" label="Билет">
                 {{ element.ticket }}
-            </td>
-            <td class="to-center order">
+            </ttd>
+            <ttd class="to-center order" label="Номер п/п">
                 {{ element.order }}
-            </td>
-            <td>
+            </ttd>
+            <td class="m-hide">
                 {{ element.text }}
             </td>
-            <td class="to-center">
+            <ttd class="to-center" label="Ответы">
                 {{ element.options.length }}
-            </td>
-            <td class="remove">
+            </ttd>
+            <td class="remove m-hide">
                 <a class="fa fa-times btn-remove" @click.stop="remove(element)"></a>
             </td>
         </tr>
@@ -62,8 +68,8 @@
     </table>
 
 
-    <table class="table" v-else v-for="ticket in tickets">
-        <thead class=" text-primary">
+    <table class="table reordering" v-else v-for="ticket in tickets">
+        <thead class="m-hide">
         <tr>
             <th class=""><h4>Билет {{ ticket.ticket }}</h4></th>
             <th class="to-center order">№п/п</th>
@@ -72,6 +78,7 @@
             <th class="remove"></th>
         </tr>
         </thead>
+        <h2 class="d-hide">Билет {{ ticket.ticket }}</h2>
         <draggable tag="tbody"
                    handle=".handler"
                    v-model="ticket.questions"
@@ -82,20 +89,25 @@
                    group="questions">
             <template #item="{element, index}">
                 <tr @click="itemClick(element)" class="cursor-pointer">
-                    <td class="handler"><i class="fa fa-bars"></i></td>
-                    <td class="to-center" v-if="element.order != index + 1">
+                    <td class="handler m-hide"><i class="fa fa-bars"></i></td>
+                    <td class="to-center m-hide" v-if="element.order != index + 1">
                         <b :title="'Старое значение: ' + element.order">{{ index + 1 }}*</b>
                     </td>
-                    <td class="to-center" v-else>
+                    <td class="to-center m-hide" v-else>
                         {{ index + 1 }}
                     </td>
-                    <td>
+                    <td class="m-hide">
                         {{ element.text }}
                     </td>
-                    <td class="to-center">
+                    <td class="d-hide handler">
+                        <i class="fa fa-bars"></i>
+                        {{ element.text }}
+                        <a class="fa fa-times btn-remove" @click.stop="remove(element)"></a>
+                    </td>
+                    <td class="to-center m-hide">
                         {{ element.options.length }}
                     </td>
-                    <td class="remove">
+                    <td class="remove m-hide">
                         <a class="fa fa-times btn-remove" @click.stop="remove(element)"></a>
                     </td>
                 </tr>
@@ -117,9 +129,10 @@ import Field from "@/Components/Field.vue";
 import VueMultiselect from 'vue-multiselect'
 import draggable from "vuedraggable";
 import TableBottom from "@/Components/TableBottom.vue";
+import Ttd from "@/Components/table-td.vue";
 
 export default {
-    components: {TableBottom, VueMultiselect, Field, Pagination, Link, draggable},
+    components: {Ttd, TableBottom, VueMultiselect, Field, Pagination, Link, draggable},
     props: {
         item: Object
     },
@@ -231,7 +244,17 @@ export default {
 @import "/resources/css/admin-vars";
 
 table.table {
-    margin-bottom: 15px
+    margin-bottom: 15px;
+}
+
+@include mobile{
+    table.table.reordering tbody{
+        gap: 0;
+        tr{border-radius: 0; margin-top: -1px;
+            &:first-child{border-radius: 5px 5px 0px 0px; }
+            &:last-child{border-radius: 0px 0px 5px 5px; }
+        }
+    }
 }
 
 h4 {
@@ -239,31 +262,52 @@ h4 {
     font-weight: normal
 }
 
+@include desktop {
+    td, th {
+        &:first-child {
+            width: 80px;
+            text-align: center;
+        }
 
+        &.order {
+            width: 80px;
+        }
 
-td, th{
-    &:first-child {
-        width: 80px;
-        text-align: center;
-    }
-    &.order {
-        width: 80px;
-    }
-    &.remove{
-        width: 40px; text-align: center;
+        &.remove {
+            width: 40px;
+            text-align: center;
 
+        }
     }
 }
+@include mobile {
+    td {
 
+        &.remove {
+            width: 40px;
+            text-align: center;
+
+        }
+    }
+}
 .handler {
-    color: $border-color;
-    border-radius: 5px;
-    width: 1.5px;
-    font-size: 1.4em;
-    margin-right: 0.4em;
-    margin-left: -0.5em;
+    @include desktop{
+        color: $border-color;
+        border-radius: 5px;
+        width: 1.5px;
+        font-size: 1.4em;
+        margin-right: 0.4em;
+        margin-left: -0.5em;
+    }
+    @include mobile{
+        display: flex;
+        align-items: baseline;
+        justify-content: flex-start;
+        gap: 15px;
+        border-bottom: none;
+        margin: 0;
+    }
     cursor: grab;
-
     &:active {
         cursor: grabbing;
     }
@@ -271,22 +315,41 @@ td, th{
 
 .simple-list-filter-wrp {
     gap: 1em;
+    @include desktop{
+        div.query-wrp{
+            flex-grow: 1;
+        }
+        .ticket-filter {
+            width: 200px;
+            flex-shrink: 0
+        }
+    }
+    @include mobile{
+        flex-direction: column;
+        div.query-wrp{
+            width: 100%;
+        }
+        .ticket-filter {
+            width: 100%;
+            flex-shrink: 0
+        }
+    }
+
 }
 
-.ticket-filter {
-    width: 200px;
-    flex-shrink: 0
-}
+
 
 .table-bottom-info {
     .btn {
         width: auto;
     }
 }
+ @include desktop{
+     .to-center {
+         text-align: center
+     }
+ }
 
-.to-center {
-    text-align: center
-}
 
 .old-order {
     color: $red;

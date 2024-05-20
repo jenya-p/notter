@@ -9,7 +9,7 @@
             </div>
 
             <table class="table">
-                <thead class=" text-primary">
+                <thead class="m-hide">
                 <tr>
                     <th class="status">
                         <sort name="status" v-model="sort" style="padding-right: 0.6em">​</sort>
@@ -34,28 +34,39 @@
                 </thead>
                 <tbody>
                 <tr v-for="item of items.data" @click="itemClick(item)" class="cursor-pointer">
-                    <td class="status">
+                    <td class="d-hide m-title">
+                        <i :class="item.status" class="status"></i>
+                        <span>{{ item.name }}</span>
+                        <a class="fa fa-times btn-remove" @click.stop="remove(item)"></a>
+                    </td>
+
+
+                    <td class="status m-hide">
                         <i v-if="item.status == 'new'"></i>
                     </td>
-                    <td class="name">
+                    <td class="name m-hide">
                         {{ item.name }}
                     </td>
-                    <td class="email">
+                    <ttd class="email" label="Емайл">
                         {{ item.email }}
-                    </td>
-                    <td class="attachments">
+                    </ttd>
+                    <td class="attachments m-hide">
                         <i v-if="item.attachment_count" class="fa fa-paperclip"
                            :title="item.attachment_count + ' вложений'"/>
                     </td>
-                    <td class="subject">
+
+                    <ttd class="subject" label="Тема">
                         <span>{{ item.subject }}</span>
-                    </td>
-                    <td class="created_at">
+                    </ttd>
+                    <ttd class="attachments d-hide" v-if="item.attachment_count" label="Вложения">
+                        {{item.attachment_count}}
+                    </ttd>
+                    <ttd class="created_at" label="Отправлено">
                         {{
                             $filters.date(item.created_at)
                         }}
-                    </td>
-                    <td class="td-actions text-right">
+                    </ttd>
+                    <td class="td-actions text-right m-hide">
                         <a class="fa fa-times btn-remove" @click.stop="remove(item)"></a>
                     </td>
                 </tr>
@@ -80,10 +91,11 @@ import Sort from "@/Components/Sort.vue";
 import _debounce from "lodash/debounce";
 import _isArray from "lodash/isArray";
 import TableBottom from "@/Components/TableBottom.vue";
+import Ttd from "@/Components/table-td.vue";
 
 
 export default {
-    components: {TableBottom, Sort, Paginator, Link, AdminLayout},
+    components: {Ttd, TableBottom, Sort, Paginator, Link, AdminLayout},
     props: {
         items: Object
     },
@@ -161,33 +173,44 @@ export default {
 @import "resources/css/admin-vars";
 
 .table {
-    td, th {
-        &.name {
-            width: 200px;
+    @include desktop{
+        td, th {
+            &.name {
+                width: 200px;
+            }
+
+            &.email {
+                width: 200px;
+            }
+
+            &.subject {
+
+            }
+
+            &.created_at {
+                width: 150px;
+            }
+
+            &.attachments {
+                width: 20px;
+                text-align: right;
+                color: $lightForeColor
+            }
+
+            &.status {
+                width: 20px;
+            }
+            &.td-actions{
+                width: 40px;
+                text-align: center;
+            }
         }
+    }
 
-        &.email {
-            width: 200px;
-        }
-
-        &.subject {
-
-        }
-
-        &.created_at {
-            width: 150px;
-        }
-
-        &.attachments {
-            width: 20px;
-            text-align: right;
-            color: $lightForeColor
-        }
-
-        &.status {
-            width: 20px;
-
-            i {
+    @include mobile{
+        .m-title{
+            justify-content: flex-start;
+            i.status {
                 display: inline-block;
                 color: white;
                 font-family: Inter;
@@ -197,13 +220,16 @@ export default {
                 line-height: 10px;
                 text-align: center;
                 border-radius: 50%;
-                background: $red;
+                margin-right: 10px;
+                &.new{
+                    background: $red;
+                }
+            }
+            span {
+                flex-grow: 1;
             }
         }
-        &.td-actions{
-            width: 40px;
-            text-align: center;
-        }
+
     }
 }
 </style>

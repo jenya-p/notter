@@ -9,7 +9,7 @@
             </div>
 
             <table class="table">
-                <thead class=" text-primary">
+                <thead class="m-hide">
                 <tr>
                     <th>id</th>
                     <th>Заголовок</th>
@@ -17,10 +17,10 @@
                 </thead>
                 <tbody>
                 <tr v-for="item of lItems.items" @click="itemClick(item)" class="cursor-pointer">
-                    <td>
+                    <ttd label="id">
                         {{ item.id }}
-                    </td>
-                    <td>
+                    </ttd>
+                    <td class="m-title">
                         {{ item.title }}
                     </td>
                 </tr>
@@ -34,11 +34,12 @@
 import AdminLayout from "@/Layouts/AdminLayout.vue";
 import {Link} from "@inertiajs/vue3";
 import {SimpleList} from "@/Components/SimpleList";
+import Ttd from "@/Components/table-td.vue";
 
 
 
 export default {
-    components: {Link, AdminLayout},
+    components: {Ttd, Link, AdminLayout},
     props: {
         items: Array
     },
@@ -61,7 +62,8 @@ export default {
 
 <style lang="scss">
 @import "resources/css/admin-vars";
-.title {display: flex; gap: 10px; align-items: center;}
-.snippet{color: #b7b7b7; white-space: nowrap; overflow: hidden; text-overflow: ellipsis}
+@include mobile{
+    .m-title{order: -1}
+}
 </style>
 

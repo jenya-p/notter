@@ -10,7 +10,6 @@
                 </li>
             </ul>
         </div>
-        <h5 v-if="isMobile && activeLabel" class="tabs-header">{{ activeLabel }}</h5>
         <div class="tabs-details">
             <slot></slot>
         </div>

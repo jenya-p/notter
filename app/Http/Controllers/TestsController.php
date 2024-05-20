@@ -148,7 +148,6 @@ class TestsController extends Controller {
             return abort(403, 'Not Available');
         }
         $ticket->update(['completed_at' => now()]);
-        $ticket->loadInfo();
 
         if($ticket->test->tickets()->whereNull('completed_at')->count() == 0){
             $ticket->test->update(['completed_at' => now()]);
@@ -156,6 +155,8 @@ class TestsController extends Controller {
 
         $ticket->start();
         $ticket->test->updateCounters();
+
+        $ticket->loadInfo();
 
         return [
             'result' => 'ok',

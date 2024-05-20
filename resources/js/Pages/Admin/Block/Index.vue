@@ -12,7 +12,7 @@
             </div>
 
             <table class="table">
-                <thead class=" text-primary">
+                <thead class="m-hide">
                 <tr>
                     <th>Название</th>
                     <th>Билетов</th>
@@ -21,15 +21,15 @@
                 </thead>
                 <tbody>
                 <tr v-for="item of lItems.items" @click="itemClick(item)" class="cursor-pointer">
-                    <td>
+                    <td class="m-title">
                         {{ item.title }}
                     </td>
-                    <td>
+                    <ttd label="Кол-во билетов" class="count">
                         {{ item.ticket_count }}
-                    </td>
-                    <td>
+                    </ttd>
+                    <ttd label="Кол-во вопросов" class="count">
                         {{ item.question_count }}
-                    </td>
+                    </ttd>
                 </tr>
                 </tbody>
             </table>
@@ -41,11 +41,12 @@
 import AdminLayout from "@/Layouts/AdminLayout.vue";
 import {Link} from "@inertiajs/vue3";
 import {SimpleList} from "@/Components/SimpleList";
+import Ttd from "@/Components/table-td.vue";
 
 
 
 export default {
-    components: {Link, AdminLayout},
+    components: {Ttd, Link, AdminLayout},
     props: {
         items: Array
     },
@@ -68,5 +69,12 @@ export default {
 
 <style lang="scss">
 @import "resources/css/admin-vars";
+
+table.table{
+    @include mobile{
+        td.count .ttd-label {width: 150px}
+    }
+}
+
 </style>
 

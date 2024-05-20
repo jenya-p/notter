@@ -1,14 +1,11 @@
 <template>
-    <AdminLayout title="Результаты" :breadcrumb="[{label: 'Результаты'}]">
+    <AdminLayout title="Платежи" :breadcrumb="['Платежи']">
 
         <div class="block">
 
             <div class="simple-list-filter-wrp">
-                <input type="text" class="input" placeholder="Поиск по пользователю и теме"
+                <input type="text" class="input" placeholder="Поиск по пользователю"
                        v-model.lazy="filter">
-                <Link :href="route('admin.test.create')" class="btn btn-sm btn-primary ">
-                    <i class="fa fa-plus" style="font-size: 0.8em; margin-right: 8px"></i>Добавить
-                </Link>
             </div>
 
             <table class="table">
@@ -17,37 +14,36 @@
                     <th class="id">
                         <sort name="id" v-model="sort">№</sort>
                     </th>
+                    <th class="status">
+                        <sort name="status" v-model="sort">Статус</sort>
+                    </th>
                     <th class="name">
                         <sort name="user" v-model="sort">Пользователь</sort>
                     </th>
-                    <th class="title">
-                        <sort name="title" v-model="sort">Блок</sort>
+                    <th class="items">
+                        Блок(и)
                     </th>
-                    <th class="status">Статус</th>
-                    <th class="process">Пройдено</th>
+                    <th class="amount">
+                        <sort name="amount" v-model="sort">Сумма</sort>
+                    </th>
                     <th class="created_at">
-                        <sort name="created_at" v-model="sort">Создано</sort>
+                        <sort name="created_at" v-model="sort">Дата</sort>
                     </th>
-                    <th class="available_till">
-                        <sort name="available_till" v-model="sort">Доступно до</sort>
+                    <th class="td-actions text-right">
                     </th>
-
                 </tr>
                 </thead>
                 <tbody>
                 <tr v-for="item of items.data" @click="itemClick(item)" class="cursor-pointer">
-                    <td class="d-hide m-title">
-                        <span>№ {{item.id}} до {{
-                            item.available_till ? $filters.date(item.available_till, 'dd MMM yyyy') : ''
-                        }}</span>
+                    <ttd class="id m-title d-hide">
+                        <span>{{ item.id }} от {{ $filters.date(item.created_at, 'dd MMM yyyy') }}</span>
                         <span class="badge" :class="'badge-' + item.status">{{ item.status_name }}</span>
+                    </ttd>
+                    <td class="id m-hide">
+                        {{ item.id }}
                     </td>
-                    <td class="m-hide">
-                        {{item.id}}
-                    </td>
-                    <td class="user m-hide">
-                        <div class="primary">{{ item.user.email }}</div>
-                        <div v-if="item.user.display_name != ''" class="secondary">{{ item.user.name }}</div>
+                    <td class="status m-hide">
+                        <span class="badge" :class="'badge-' + item.status">{{ item.status_name }}</span>
                     </td>
                     <ttd class="name d-hide" label="Email">
                         {{ item.user.email }}
@@ -55,25 +51,29 @@
                     <ttd class="name d-hide" label="Имя" v-if="item.user.display_name != ''">
                         {{ item.user.display_name }}
                     </ttd>
-                    <ttd class="title" label="Блок">
-                        {{ item.title }}
-                    </ttd>
-                    <td class="status m-hide">
-                        <span class="badge" :class="'badge-' + item.status">{{ item.status_name }}</span>
+                    <td class="name m-hide">
+                        <div class="primary">{{ item.user.email }}</div>
+                        <div v-if="item.user.display_name != ''" class="secondary">{{ item.user.display_name }}</div>
                     </td>
-                    <ttd class="process" label="Пройдено">
-                        {{item.ticket_count !== 0 ? Math.round(100 * (item.ticket_passed_count + item.ticket_failed_count) / item.ticket_count) + ' %' : ''}}
+                    <ttd class="items" label="Блоки">
+                        <p v-for="(subItem, i) of item.items">{{ i + 1 }}. {{ subItem.title }}</p>
                     </ttd>
-                    <ttd class="created_at" label="Доступно до">
-                        <span class="primary">{{
-                            $filters.date(item.created_at, 'dd MMM yyyy HH:mm')
-                        }}</span>
+                    <ttd class="amount text-right" label="Сумма">
+                        {{ $filters.currency(item.amount) }}
                     </ttd>
-                    <ttd class="created_at" label="Создано">
+                    <td class="created_at m-hide">
                         {{
-                            item.available_till ? $filters.date(item.available_till, 'dd MMM yyyy') : ''
+                            $filters.date(item.created_at, 'dd MMM yyyy')
                         }}
-                    </ttd>
+                        <div class="secondary">
+                            {{
+                                $filters.date(item.created_at, 'HH:mm')
+                            }}
+                        </div>
+                    </td>
+                    <td class="td-actions text-right">
+
+                    </td>
                 </tr>
                 </tbody>
             </table>
@@ -110,9 +110,7 @@ export default {
         if (page == null) {
             page = 1;
         }
-        let filter = u.get('filter');
         let sort = u.get('sort');
-
         if (sort != null) {
             sort = sort.split(':');
             if (_isArray(sort) && sort.length == 2) {
@@ -125,12 +123,12 @@ export default {
         return {
             page: 1,
             sort: sort,
-            filter: filter
+            filter: u.get('filter')
         };
     },
     methods: {
         itemClick: function (item) {
-            this.$inertia.visit(route('admin.test.edit', {test: item.id}))
+            this.$inertia.visit(route('admin.payment.show', {payment: item.id}))
         },
         refreshPage: _debounce(function () {
             var $v = this;
@@ -143,7 +141,10 @@ export default {
                     page: this.page,
                     filter: this.filter,
                     sort: sort
-                }
+                },
+                onSuccess: (page) => {
+                    console.log(page)
+                },
             });
         })
     },
@@ -165,69 +166,72 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
 @import "resources/css/admin-vars";
 
+
 table.table {
+    td.items p {
+        margin: 0 0 2px 0;
+    }
+
     @include desktop {
         td, th {
+            &.id {
+                width: 50px;
+            }
+
+            &.status {
+                width: 90px;
+            }
+
             &.user {
                 width: 200px;
             }
 
+            &.items {
+                width: auto;
 
-            &.title {
-
-            }
-
-            &.created_at, &.available_till {
-                width: 150px;
-            }
-
-            &.status {
-                width: 20px;
-
-                i {
-                    display: inline-block;
-                    color: white;
-                    font-family: Inter;
-                    font-size: 12px;
-                    width: 10px;
-                    height: 10px;
-                    line-height: 10px;
-                    text-align: center;
-                    border-radius: 50%;
-                    background: $red;
+                p {
+                    margin: 0 0 2px 0;
                 }
             }
 
-            &.process {
+            &.amount {
+                width: 100px;
+                text-align: right;
+                padding-right: 20px;
+            }
+
+            &.created_at {
+                width: 120px;
+            }
+
+            &.td-actions {
+                width: 40px;
                 text-align: center;
             }
         }
+        td.amount {
+            padding-right: 40px;
+        }
     }
 
-
     .badge {
-
-        &-active {
-            color: white;
-            background: $green;
-        }
-        &-finished {
-            color: #8b8b8b;
-            background: #fffccf;
-        }
         &-done {
             color: $green;
         }
-        &-unavailable {
-            background: #505050;
-            color: #e0e0e0;
+
+        &-canceled {
+            color: #8b8b8b;
+            background: #fffccf;
+        }
+
+        &-new {
+            color: white;
+            background: $green;
         }
     }
-
-
 
 
 }

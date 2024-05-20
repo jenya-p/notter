@@ -626,7 +626,9 @@ footer ul li a:hover{}
 
         }
         tbody tr{
-
+            &.cursor-pointer {
+                cursor: pointer;
+            }
         }
 
         tbody tr td {
@@ -638,6 +640,18 @@ footer ul li a:hover{}
                 padding-left: 0;
             }
         }
+
+        tfoot tr td {
+            font-weight: 700;
+            color: #666;
+            padding: 9px 0 9px 9px;
+            border-top: 1px solid #E5E7EB;
+            &:first-child{
+                padding-left: 0;
+            }
+        }
+
+
         .to-right{
             text-align: right;
         }
@@ -797,6 +811,27 @@ ul.tabs{
         color: #333;
         border-bottom: 1px solid #333;
     }
+
+    a{
+        display: inline-block;
+        padding: 0 4px;
+        height: 40px;
+        line-height: 40px;
+        color: #b3b3b3;
+        font-weight: 600;
+        text-decoration: none;
+        translate: 0 1px;
+        border-bottom: 1px solid transparent;
+        transition: color 200ms ease;
+        white-space: nowrap;
+        &:hover{
+            color: darken(#b3b3b3, 10);
+        }
+        &:active{
+            transform: translate(-0.5px, 0.5px);
+        }
+    }
+
     @media (min-width: 500px) {
         padding: 0;margin: 0 0 10px 0;
     }

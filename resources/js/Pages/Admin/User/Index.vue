@@ -1,5 +1,5 @@
 <template>
-    <AdminLayout title="Пользователи" :breadcrumb="[{label: 'Пользователи'}]">
+    <AdminLayout title="Пользователи" :breadcrumb="['Пользователи']">
 
         <div class="block">
 
@@ -12,7 +12,7 @@
             </div>
 
             <table class="table">
-                <thead class=" text-primary">
+                <thead class=" text-primary m-hide">
                 <tr>
                     <th width="30%">
                         <sort name="name" v-model="sort">Имя</sort>
@@ -33,20 +33,21 @@
                 </thead>
                 <tbody>
                 <tr v-for="item of items.data" @click="itemClick(item)" class="cursor-pointer">
-                    <td>
-                        {{ item.name }}
-                    </td>
-                    <td>
+                    <ttd class="m-title">
+                        <span>{{ item.display_name }}</span>
+                        <div class="role-badge" v-if="item.is_admin">Админ</div>
+                    </ttd>
+                    <ttd label="Email">
                         {{ item.email }}
-                    </td>
-                    <td class="roles">
+                    </ttd>
+                    <td class="roles m-hide" >
                         <div class="role-badge" v-if="item.is_admin">Админ</div>
                     </td>
-                    <td>
+                    <ttd label="Создан">
                         {{
                             $filters.date(item.created_at)
                         }}
-                    </td>
+                    </ttd>
                     <td class="td-actions text-right">
                     </td>
                 </tr>
@@ -72,11 +73,12 @@ import Sort from "@/Components/Sort.vue";
 import _debounce from "lodash/debounce";
 import _isArray from "lodash/isArray";
 import TableBottom from "@/Components/TableBottom.vue";
+import Ttd from "@/Components/table-td.vue";
 
 
 
 export default {
-    components: {TableBottom, Sort, Paginator, Link, AdminLayout},
+    components: {Ttd, TableBottom, Sort, Paginator, Link, AdminLayout},
     props: {
         items: Object
     },

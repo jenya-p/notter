@@ -42,9 +42,6 @@
             </div>
 
         </form>
-
-
-        <password v-if="item && item.id == $page.props.auth.user.id" :item="item"/>
         </div>
     </AdminLayout>
 </template>
@@ -53,7 +50,6 @@
 import {Head, Link, useForm} from '@inertiajs/vue3';
 import Authenticated from '@/Layouts/AdminLayout.vue';
 import Field from "@/Components/Field.vue";
-import Password from "@/Pages/Admin/User/Password.vue";
 import AdminLayout from "@/Layouts/AdminLayout.vue";
 import TextareaAutosize from "@/Components/TextareaAutosize.vue";
 import Checkbox from "@/Components/Checkbox.vue";
@@ -61,7 +57,7 @@ import Attachments from "@/Components/Attachments.vue";
 
 
 export default {
-    components: {Attachments, Checkbox, TextareaAutosize, AdminLayout, Password, Field, Authenticated, Link},
+    components: {Attachments, Checkbox, TextareaAutosize, AdminLayout, Field, Authenticated, Link},
     props: {
         item: {
             type: Object,

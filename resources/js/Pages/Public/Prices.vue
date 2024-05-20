@@ -56,6 +56,7 @@ import Checkbox from "@/Components/Checkbox.vue";
 import {router, Link} from "@inertiajs/vue3";
 import date from "@/Filters/date.js"
 import plural from "@/Filters/plural.js";
+import _isEmpty from "lodash/isEmpty";
 export default {
     components: {GuestLayout, Checkbox, Link},
     props: {
@@ -81,8 +82,13 @@ export default {
         }
     },
     methods: {
-        submit(ids){
-            router.get(route('purchase.create'), {ids: ids});
+        async submit(ids){
+            let result = await axios.post(route('profile-payment.store'), {ids: ids});
+            if (result.data.result == 'ok' && !_isEmpty(result.data.redirect_to)) {
+                document.location = result.data.redirect_to;
+            } else {
+                alert('Что-то пошло не так. Обновите страницу, пожалуйста, или обратитесь к администратору');
+            }
         },
         date: date,
         plural: plural

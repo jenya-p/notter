@@ -1,8 +1,7 @@
 <template>
-    <aside>
-        <a href="/" class="logo" target="notter-home">
-            <img src="/images/logo.svg" alt="">
-        </a>
+    <aside :class="minified ? 'min': 'max'">
+        <a class="minify-btn" @click="toggleMinified"></a>
+        <a href="/" class="logo" target="notter-home"></a>
 
         <div class="sidebar-menu">
             <ul class="nav">
@@ -24,11 +23,11 @@
                         <span>Тестирования</span>
                     </Link>
                 </li>
-                <li>
-                    <span>
+                <li :class="{active: routeIs('payment')}">
+                    <Link :href="route('admin.payment.index')">
                         <i class="fa fa-money-check-dollar"></i>
                         <span>Платежи</span>
-                    </span>
+                    </Link>
                 </li>
                 <li :class="{active: routeIs('content')}">
                     <Link :href="route('admin.content.index')">
@@ -49,7 +48,7 @@
         <div class="current-user">
             <span class="username">{{ $page.props.auth.user.display_name }}</span>
             <div class="actions">
-                <Link :href="route('admin.user.edit', {user: $page.props.auth.user.id})" class="logout">Профиль</Link>
+                <Link :href="route('admin.user.edit', {user: $page.props.auth.user.id})" class="profile">Профиль</Link>
                 <a :href="route('logout')" class="btn-a logout">Выход</a>
             </div>
         </div>
@@ -64,13 +63,20 @@ import {Link} from "@inertiajs/vue3";
 export default {
     components: {Link},
     data() {
+         let minified = false;
+        if(window.innerWidth < 980){
+            minified = true;
+        } else if(localStorage.hasOwnProperty('sidebar-state')) {
+            minified = localStorage.getItem('sidebar-state') == 'true';
+            console.log(minified)
+        }
         return {
-            curSection: null
+            curSection: null,
+            minified: minified,
         }
     },
     methods: {
         toggle(section) {
-            console.log(section);
             if (section == this.curSection) {
                 this.curSection = null;
             } else {
@@ -84,13 +90,21 @@ export default {
                 }
             }
             return false;
+        },
+        toggleMinified(){
+            this.minified = !this.minified;
+            if(window.innerWidth > 980){
+                localStorage.setItem('sidebar-state', this.minified);
+            }
         }
+
     },
     computed: {
         backfeeds(){
             return this.$page.props.notifications.backfeed;
         }
     }
+
 }
 
 </script>

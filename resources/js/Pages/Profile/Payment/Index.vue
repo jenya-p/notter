@@ -7,9 +7,6 @@ import {useForm, usePage, Link} from "@inertiajs/vue3";
 export default {
     components: {Link, Field, ProfileTabs, GuestLayout},
     props: {
-        user: {
-            type: Object,
-        },
         items: {
             type: Array, default: []
         }
@@ -21,6 +18,11 @@ export default {
                 name: user.name,
                 email: user.email,
             })
+        }
+    },
+    methods: {
+        itemClick(item){
+            this.$inertia.visit(route('profile-payment.show', {payment: item.id}))
         }
     }
 }
@@ -40,8 +42,7 @@ export default {
                 <span>История операций</span>
             </div>
 
-            <div class="table-wrapper" v-if="!items.length">
-
+            <div class="table-wrapper" v-if="items.length">
 
                 <table class="table">
                     <thead>
@@ -53,17 +54,17 @@ export default {
                     </thead>
 
                     <tbody>
-                    <tr>
-                        <td class="font-inter"><span class="m-label">Число: </span><span class="nobr">01/03/2024 16:31</span></td>
-                        <td class="m-title">Покупка (Название теста № блока)</td>
-                        <td class="font-inter to-right"><span class="m-label">Сумма: </span><span class="color-red bold">40 000 ₽</span></td>
-                    </tr>
-                    <tr>
-                        <td class="font-inter"><label class="m-label">Число: </label><span class="nobr">01/03/2024 16:31</span></td>
-                        <td class="m-title">Покупка (Название теста № блока) (Название теста № блока) (Название теста № блока) (Название теста № блока) (Название теста № блока) (Название теста № блока)</td>
-                        <td class="font-inter to-right"><span class="m-label">Сумма: </span><span class="color-red bold">4 000 ₽</span></td>
+                    <tr v-for="item of items" class="cursor-pointer" @click="itemClick(item)" >
+                        <td class="font-inter">
+                            <span class="m-label">Число: </span><span class="nobr">{{ $filters.date(item.created_at) }}</span>
+                        </td>
+                        <td class="m-title">Покупка ({{ item.description }})</td>
+                        <td class="font-inter to-right">
+                            <span class="m-label">Сумма: </span><span class="color-red bold nobr">{{  $filters.currency(item.amount, 2) }} ₽</span>
+                        </td>
                     </tr>
                     </tbody>
+
                 </table>
 
             </div>

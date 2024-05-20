@@ -65,7 +65,7 @@ export default {
         top: 50%;
         right: 0;
         height: 1em;
-        margin-top: -0.5em;
+        margin-top: -0.55em;
         content: '';
         font-family: 'Font Awesome 6 Free';
         font-weight: 900;
