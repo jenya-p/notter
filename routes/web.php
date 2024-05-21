@@ -13,6 +13,7 @@ Route::get('/{slug}', [\App\Http\Controllers\HomeController::class, 'content'])
     ->whereIn('slug', ['about', 'agreement']);
 
 Route::get('/prices', [\App\Http\Controllers\HomeController::class, 'prices'])->name('prices');
+Route::get('/purchase', [PaymentController::class, 'create'])->name('purchase');
 
 Route::get('/backfeed', [\App\Http\Controllers\BackfeedController::class, 'create'])->name('backfeed.create');
 Route::post('/backfeed', [\App\Http\Controllers\BackfeedController::class, 'store'])->name('backfeed.store');
@@ -27,7 +28,6 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [InfoController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [InfoController::class, 'destroy'])->name('profile.destroy');
 
-    Route::get('/tests', [\App\Http\Controllers\HomeController::class, 'tests'])->name('tests');
     Route::get('/test/{ticket}/complete', [\App\Http\Controllers\TestsController::class, 'complete'])->name('test.complete');
     Route::get('/test/{test}/{ticketIndex?}/{questionIndex?}', [\App\Http\Controllers\TestsController::class, 'test'])->name('test');
     Route::post('/test/{question}', [\App\Http\Controllers\TestsController::class, 'answer'])->name('test.answer');
@@ -37,8 +37,6 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile-payment', [PaymentController::class, 'index'])->name('profile-payment.index');
     Route::post('/profile-payment', [PaymentController::class, 'store'])->name('profile-payment.store');
     Route::get('/profile-payment/{payment}', [PaymentController::class, 'show'])->name('profile-payment.show');
-
-
 
     Route::resource('attachment', \App\Http\Controllers\AttachmentController::class)->only(['index', 'store', 'update', 'destroy']);
     Route::get('/attachment/{attachment}/download', [\App\Http\Controllers\AttachmentController::class, 'download'])->name('attachment.download');

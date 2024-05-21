@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Quiz\Block;
+use Illuminate\Http\Request;
 use Inertia\Inertia;
 
 class HomeController extends Controller {
@@ -29,13 +30,6 @@ class HomeController extends Controller {
         ]);
 
     }
-
-
-    public function tests() {
-        return Inertia::render('Public/Tests', []);
-    }
-
-
 
 
 

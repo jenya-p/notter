@@ -45,7 +45,7 @@
 
                     <div v-if="show_status" class="after-payment-action">
                         <Link :href="route('test', {test: payment.items[0].test_id})" class="btn btn-green" v-if="payment.status=='done' && payment.items.length == 1">Преступить к тестированию</Link>
-                        <Link :href="route('tests')" class="btn btn-green" v-else-if="payment.status=='done' && payment.items.length > 1">Доступные тесты</Link>
+                        <Link :href="route('profile-test.index')" class="btn btn-green" v-else-if="payment.status=='done' && payment.items.length > 1">Доступные тесты</Link>
                         <Link :href="route('prices')" class="btn btn-green" v-else-if="payment.status=='canceled'">Каталог тестов</Link>
                     </div>
                     <div v-else-if="confirmation_url" class="after-payment-action">

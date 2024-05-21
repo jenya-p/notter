@@ -28,33 +28,28 @@ class PaymentController extends Controller {
         ]);
     }
 
+    public function create(Request $request){
+
+        list($items, $amount) = $this->getValidatedOrder($request);
+
+        if(!empty(\Auth::id())){
+            return Inertia::render('Profile/Payment/Create', [
+                'items' => $items,
+                'amount' => $amount
+            ]);
+        } else {
+            return redirect()->setIntendedUrl($request->getRequestUri())->to('/login');
+        }
+    }
 
     public function store(Request $request) {
 
-        $request->validate([
-            'ids' => 'required|array',
-            'ids.*' => 'required|integer|exists:quiz_blocks,id',
-        ]);
-
-        $blocks = Block::active()->find($request->ids);
-
-        $items = [];
-        $amount = 0;
-        /** @var Block $block */
-        foreach ($blocks as $block) {
-            $items[] = [
-                'id' => $block->id,
-                'title' => $block->title,
-                'amount' => $block->price
-            ];
-            $amount += $block->price;
-        }
+        list($items, $amount) = $this->getValidatedOrder($request);
 
         $payment = Payment::create([
             'amount' => $amount,
             'items' => $items
         ]);
-
 
         $client = new Client();
         $client->setAuth(env('YOOKASSA_SHOPID'), env('YOOKASSA_SECRET'));
@@ -85,6 +80,24 @@ class PaymentController extends Controller {
             throw new \Exception('Invalid responce from yoomoney');
         }
 
+    }
+
+
+    protected function getValidatedOrder(Request $request){
+        $blocks = Block::active()->find($request->ids);
+
+        $items = [];
+        $amount = 0;
+        /** @var Block $block */
+        foreach ($blocks as $block) {
+            $items[] = [
+                'id' => $block->id,
+                'title' => $block->title,
+                'amount' => $block->price
+            ];
+            $amount += $block->price;
+        }
+        return [$items, $amount];
     }
 
 
@@ -126,10 +139,10 @@ class PaymentController extends Controller {
 
             $client = new \YooKassa\Client();
 
-// FIXME           if (!$client->isNotificationIPTrusted($_SERVER['REMOTE_ADDR'])) {
-//                header('HTTP/1.1 400 Something went wrong');
-//                exit();
-//            }
+            if (!$client->isNotificationIPTrusted($_SERVER['REMOTE_ADDR'])) {
+                header('HTTP/1.1 400 Something went wrong');
+                exit();
+            }
 
             $event = $notificationObject->getEvent();
             if (in_array($event, [
