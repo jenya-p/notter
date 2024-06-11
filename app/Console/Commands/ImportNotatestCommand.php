@@ -40,7 +40,7 @@ class ImportNotatestCommand extends Command {
 
         $pairs = $this->getTickets();
         foreach ($pairs as $ticket => $id) {
-            if($ticket < 115) continue;
+
             $attemptId = $this->getAttemptId($id);
 
             $this->line('Билет ' . $ticket . ' id=' . $id . ' attempt=' . $attemptId);
