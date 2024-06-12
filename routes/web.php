@@ -10,7 +10,7 @@ Route::get('/dashboard', function(){
     return redirect()->route('profile-test.index');
 })->name('dashboard');
 Route::get('/{slug}', [\App\Http\Controllers\HomeController::class, 'content'])
-    ->whereIn('slug', ['about', 'agreement']);
+    ->whereIn('slug', ['about', 'agreement', 'contacts']);
 
 Route::get('/prices', [\App\Http\Controllers\HomeController::class, 'prices'])->name('prices');
 Route::get('/purchase', [PaymentController::class, 'create'])->name('purchase');
