@@ -208,7 +208,7 @@ class ImportNotatestCommand extends Command {
 
         $dbBlock = Block::find(4);
 
-        $dbBlock->questions()->delete();
+        // $dbBlock->questions()->delete();
 
         /** @var simple_html_dom_node $htmlQue */
         foreach ($htmlQues as $index => $htmlQue) {

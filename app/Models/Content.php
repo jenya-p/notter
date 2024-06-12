@@ -8,10 +8,18 @@ use Illuminate\Database\Eloquent\Model;
 
 /**
  * @property int $id
- * @property string $title
- * @property string $content
+ * @property string $url
  *
- * @prepoerty-read string $snippet
+ * @property string $title
+ * @property string $title_en
+ * @property string $content
+ * @property string $content_en
+ * @property string $seo_title
+ * @property string $seo_title_en
+ * @property string $seo_description
+ * @property string $seo_description_en
+ * @property string $seo_keywords
+ * @property string $seo_keywords_en
  *
  * @mixin \Eloquent
  */
@@ -21,11 +29,19 @@ class Content extends Model
     public $timestamps = false;
     protected $casts = ['id' => 'string'];
 
-    protected $fillable = ['id','title','content'];
+    protected $fillable = [
+        'url',
+        'title',
+        'title_en',
+        'content',
+        'content_en',
+        'seo_title',
+        'seo_title_en',
+        'seo_description',
+        'seo_description_en',
+        'seo_keywords',
+        'seo_keywords_en',
+        ];
 
-
-    public function getSnippetAttribute(){
-        return mb_substr(strip_tags($this->content), 0, 250);
-    }
 
 }

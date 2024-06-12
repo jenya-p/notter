@@ -122,7 +122,8 @@ export default {
         <ul>
             <li><Link href="/about">О сервисе</Link></li>
             <li><Link href="/backfeed">Обратная связь</Link></li>
-            <li><Link href="/agreement">Контакты</Link></li>
+            <li><Link href="/agreement">Соглашение</Link></li>
+            <li><Link href="/contacts">Контакты</Link></li>
             <li v-if="$page.props.auth.user && $page.props.auth.user.is_admin"><a href="/admin" target="_blank">Админка</a></li>
             <li v-if="$page.props.auth.user"><Link :href="route('logout')" method="get">Выйти</Link></li>
         </ul>
