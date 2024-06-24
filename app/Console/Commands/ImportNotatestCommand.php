@@ -21,7 +21,7 @@ class ImportNotatestCommand extends Command {
     public function handle() {
 
         $cookieJar = CookieJar::fromArray([
-            'MoodleSession' => '7188a57a1643fd17ffeec18cd100409d'
+            'MoodleSession' => '122d330edc1ab221208583797e956255'
         ], 'notatest.ru');
         $this->client = new Client([
             'base_uri' => 'https://notatest.ru',
@@ -37,8 +37,8 @@ class ImportNotatestCommand extends Command {
             'cookies' => $cookieJar
         ]);
 
+        $pairs = $this->getTickets(11);
 
-        $pairs = $this->getTickets();
         foreach ($pairs as $ticket => $id) {
 
             $attemptId = $this->getAttemptId($id);
@@ -126,23 +126,24 @@ class ImportNotatestCommand extends Command {
     }
 
 
-    public function getTickets() {
-        if (!\Cache::has('notatest-courses')) {
-            $html = $this->getRemote('/course/view.php?id=14', 'course-list');
+    public function getTickets($courseId) {
+        //if (!\Cache::has('notatest-courses-'.$courseId)) {
+            $html = $this->getRemote('/course/view.php?id=' . $courseId, 'course-list');
             $pairs = [];
             /** @var simple_html_dom_node $htmlBlock */
             foreach ($html->find('.activityinstance') as $htmlBlock) {
                 $src = $htmlBlock->find('a', 0)->href;
 
                 $id = (int)mb_substr($src, mb_strpos($src, '?id=') + 4);
+                if($id == 372) continue;
                 $name = $htmlBlock->find('.instancename', 0)->text();
-                $ticket = (int)mb_substr($name, 16);
+                $ticket = (int)mb_substr($name, 15);
                 $pairs[$ticket] = $id;
             }
-            \Cache::put('notatest-courses', $pairs);
-        } else {
-            $pairs = \Cache::get('notatest-courses');
-        }
+            \Cache::put('notatest-courses-'.$courseId, $pairs);
+        //} else {
+            $pairs = \Cache::get('notatest-courses-'.$courseId);
+        //}
 
         return $pairs;
     }
@@ -160,6 +161,7 @@ class ImportNotatestCommand extends Command {
                 'form_params' => [
                     'cmid' => $cmid,
                     'sesskey' => $sesskey,
+                    '_qf__mod_quiz_preflight_check_form' => 1
                 ], 'allow_redirects' => false
             ]);
 
@@ -206,9 +208,9 @@ class ImportNotatestCommand extends Command {
 
         $htmlQues = $html->find('.que .content');
 
-        $dbBlock = Block::find(4);
+        $dbBlock = Block::find(5);
 
-        // $dbBlock->questions()->delete();
+        $dbBlock->questions()->where('ticket', '=', $ticketIndex)->delete();
 
         /** @var simple_html_dom_node $htmlQue */
         foreach ($htmlQues as $index => $htmlQue) {
@@ -259,32 +261,38 @@ class ImportNotatestCommand extends Command {
             } else {
                 $description = null;
             }
-            $right = trim($htmlQue->find('.rightanswer', 0)->text());
-            $rightIndex = -1;
-            if (!empty($right) && \Str::startsWith($right, 'Правильный ответ: ')) {
-                $right = mb_substr($right, 18);
-                $rightIndex = array_search($right, $answs);
-                if ($rightIndex === false) {
-                    $rightIndex = null;
-                    $this->warn("Вопрос " . ($index + 1) . " имеет некорректный верный ответ (1)");
-                }
+            $right = $htmlQue->find('.rightanswer');
+            if(count($right) == 0){
+                $this->warn("Вопрос " . ($index + 1) . " не содержит ответов (1)");
             } else {
-                $rightIndex = null;
-                $this->warn("Вопрос " . ($index + 1) . " имеет некорректный верный ответ (2)");
+                $right = trim($right[0]->text());
+                $rightIndex = -1;
+                if (!empty($right) && \Str::startsWith($right, 'Правильный ответ: ')) {
+                    $right = mb_substr($right, 18);
+                    $rightIndex = array_search($right, $answs);
+                    if ($rightIndex === false) {
+                        $rightIndex = null;
+                        $this->warn("Вопрос " . ($index + 1) . " имеет некорректный верный ответ (1)");
+                    }
+                } else {
+                    $rightIndex = null;
+                    $this->warn("Вопрос " . ($index + 1) . " имеет некорректный верный ответ (2)");
+                }
+
+                if (count($answs) == 0) {
+                    $this->warn("Вопрос " . ($index + 1) . " не содержит ответов (2)");
+                }
+
+                $dbQuestion = $dbBlock->questions()->create([
+                    'order' => $index + 1,
+                    'ticket' => $ticketIndex,
+                    'text' => $que,
+                    'options' => $answs,
+                    'right' => $rightIndex,
+                    'description' => $description
+                ]);
             }
 
-            if (count($answs) == 0) {
-                $this->warn("Вопрос " . ($index + 1) . " не содержит ответов");
-            }
-
-            $dbQuestion = $dbBlock->questions()->create([
-                'order' => $index + 1,
-                'ticket' => $ticketIndex,
-                'text' => $que,
-                'options' => $answs,
-                'right' => $rightIndex,
-                'description' => $description
-            ]);
 
 
         }
