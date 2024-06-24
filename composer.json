@@ -6,6 +6,7 @@
     "license": "MIT",
     "require": {
         "php": "^8.2",
+        "heriw/laravel-simple-html-dom-parser": "^1.9",
         "inertiajs/inertia-laravel": "^1.0",
         "intervention/image": "2.7.2",
         "laravel/framework": "^11.0",

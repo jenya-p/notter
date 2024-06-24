@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "44a4b8d6bb9acd252816c0890bc2c316",
+    "content-hash": "4fa16f41e36cb876435b54d3e195a261",
     "packages": [
         {
             "name": "brick/math",
@@ -1049,6 +1049,55 @@
                 }
             ],
             "time": "2023-12-03T19:50:20+00:00"
+        },
+        {
+            "name": "heriw/laravel-simple-html-dom-parser",
+            "version": "v1.9.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/heriwijaya/laravel-simple-html-dom-parser.git",
+                "reference": "b3384d5b402d91db9446bca7e3fdf83f4c9667ad"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/heriwijaya/laravel-simple-html-dom-parser/zipball/b3384d5b402d91db9446bca7e3fdf83f4c9667ad",
+                "reference": "b3384d5b402d91db9446bca7e3fdf83f4c9667ad",
+                "shasum": ""
+            },
+            "require": {
+                "ext-mbstring": "*",
+                "php": ">=5.6.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Heriw\\LaravelSimpleHtmlDomParser\\HtmlDomParserServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Heriw\\LaravelSimpleHtmlDomParser\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "heriwijaya",
+                    "email": "heriwijayana86@gmail.com",
+                    "homepage": "https://github.com/heriwijaya"
+                }
+            ],
+            "description": "Laravel simple html dom parser",
+            "support": {
+                "issues": "https://github.com/heriwijaya/laravel-simple-html-dom-parser/issues",
+                "source": "https://github.com/heriwijaya/laravel-simple-html-dom-parser/tree/v1.9.1"
+            },
+            "time": "2023-09-24T09:18:21+00:00"
         },
         {
             "name": "inertiajs/inertia-laravel",
