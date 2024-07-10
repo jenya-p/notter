@@ -15,7 +15,7 @@ class ContentController extends Controller
      */
     public function index()
     {
-        return Inertia::render('Admin/Content/Index', ['items' => Content::all()->append('snippet')]);
+        return Inertia::render('Admin/Content/Index', ['items' => Content::all()]);
     }
 
 
