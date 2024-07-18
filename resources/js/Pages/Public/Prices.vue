@@ -1,8 +1,7 @@
 <template>
     <GuestLayout>
         <div class="block">
-            <h1>Подготовка к экзамену на адвоката</h1>
-
+            <!-- <h1>Подготовка к экзамену на адвоката</h1> -->
             <div class="item" v-for="item in blocks">
                 <div class="item-left">
                     <checkbox v-model="selected" :value="item.id"><h3>{{ item.title }}</h3></checkbox>
