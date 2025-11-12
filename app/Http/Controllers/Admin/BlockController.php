@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\BlockRequest;
+use App\Jobs\PublishBlock;
 use App\Models\Quiz\Block;
 use App\Models\Quiz\Question;
 use Illuminate\Http\Request;
@@ -67,6 +68,8 @@ class BlockController extends Controller {
 
             $block->questions()->whereNotIn('id', $ids)->delete();
 
+        } else if($request->get('publish') == '1'){
+            PublishBlock::dispatchAfterResponse($block->id);
         }
 
         return \Redirect::route('admin.block.index');
@@ -77,4 +80,7 @@ class BlockController extends Controller {
         $block->delete();
         return ['result' => 'ok'];
     }
+
+
+
 }

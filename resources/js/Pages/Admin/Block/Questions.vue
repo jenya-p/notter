@@ -68,52 +68,54 @@
     </table>
 
 
-    <table class="table reordering" v-else v-for="ticket in tickets">
-        <thead class="m-hide">
-        <tr>
-            <th class=""><h4>Билет {{ ticket.ticket }}</h4></th>
-            <th class="to-center order">№п/п</th>
-            <th>Вопрос</th>
-            <th class="to-center">Варианты</th>
-            <th class="remove"></th>
-        </tr>
-        </thead>
-        <h2 class="d-hide">Билет {{ ticket.ticket }}</h2>
-        <draggable tag="tbody"
-                   handle=".handler"
-                   v-model="ticket.questions"
-                   ghost-class="ghost"
-                   animation="200"
-                   item-key="id"
-                   @end="reorder"
-                   group="questions">
-            <template #item="{element, index}">
-                <tr @click="itemClick(element)" class="cursor-pointer">
-                    <td class="handler m-hide"><i class="fa fa-bars"></i></td>
-                    <td class="to-center m-hide" v-if="element.order != index + 1">
-                        <b :title="'Старое значение: ' + element.order">{{ index + 1 }}*</b>
-                    </td>
-                    <td class="to-center m-hide" v-else>
-                        {{ index + 1 }}
-                    </td>
-                    <td class="m-hide">
-                        {{ element.text }}
-                    </td>
-                    <td class="d-hide handler">
-                        <i class="fa fa-bars"></i>
-                        {{ element.text }}
-                        <a class="fa fa-times btn-remove" @click.stop="remove(element)"></a>
-                    </td>
-                    <td class="to-center m-hide">
-                        {{ element.options.length }}
-                    </td>
-                    <td class="remove m-hide">
-                        <a class="fa fa-times btn-remove" @click.stop="remove(element)"></a>
-                    </td>
-                </tr>
-            </template>
-        </draggable>
-    </table>
+    <template v-else v-for="ticket1 in tickets">
+        <table class="table reordering" v-if="ticket == null || (ticket?.ticket ?? -1) === ticket1.ticket">
+            <thead class="m-hide">
+            <tr>
+                <th class=""><h4>Билет {{ ticket1.ticket }}</h4></th>
+                <th class="to-center order">№п/п</th>
+                <th>Вопрос</th>
+                <th class="to-center">Варианты</th>
+                <th class="remove"></th>
+            </tr>
+            </thead>
+            <h2 class="d-hide">Билет {{ ticket1.ticket }}</h2>
+            <draggable tag="tbody"
+                       handle=".handler"
+                       v-model="ticket1.questions"
+                       ghost-class="ghost"
+                       animation="200"
+                       item-key="id"
+                       @end="reorder"
+                       group="questions">
+                <template #item="{element, index}">
+                    <tr @click="itemClick(element)" class="cursor-pointer">
+                        <td class="handler m-hide"><i class="fa fa-bars"></i></td>
+                        <td class="to-center m-hide" v-if="element.order != index + 1">
+                            <b :title="'Старое значение: ' + element.order">{{ index + 1 }}*</b>
+                        </td>
+                        <td class="to-center m-hide" v-else>
+                            {{ index + 1 }}
+                        </td>
+                        <td class="m-hide">
+                            {{ element.text }}
+                        </td>
+                        <td class="d-hide handler">
+                            <i class="fa fa-bars"></i>
+                            {{ element.text }}
+                            <a class="fa fa-times btn-remove" @click.stop="remove(element)"></a>
+                        </td>
+                        <td class="to-center m-hide">
+                            {{ element.options.length }}
+                        </td>
+                        <td class="remove m-hide">
+                            <a class="fa fa-times btn-remove" @click.stop="remove(element)"></a>
+                        </td>
+                    </tr>
+                </template>
+            </draggable>
+        </table>
+    </template>
 
     <table-bottom align="left" v-if="!filtered && reordered">
         <a class="btn btn-primary btn-xs" @click="saveOrder">Сохранить порядок</a>

@@ -34,7 +34,11 @@
 
                     <div class="block-footer">
                         <button type="submit" class="btn btn-primary">Сохранить</button>
+                        <a @click="submit(true)" class="btn btn-default" style="width: auto;margin-left: 1em;" v-if="item.id">Опубликовать изменения</a>
                         <!--                <History type="user"/>-->
+
+
+
                     </div>
 
                 </form>
@@ -113,7 +117,7 @@ export default {
     },
 
     methods: {
-        submit() {
+        submit(publish = false) {
             this.form.errors = [];
             if(this.form.questions){
                 for (const index in this.form.questions) {
@@ -121,7 +125,7 @@ export default {
                 }
             }
             if (this.item.id) {
-                this.form.put(route('admin.block.update', {block: this.item.id}));
+                this.form.put(route('admin.block.update', {block: this.item.id, publish: publish}));
             } else {
                 this.form.post(route('admin.block.store'));
             }
