@@ -15,7 +15,7 @@ export default {
     data() {
         return {
             form: useForm({
-                old_password: '',
+                current_password: '',
                 password: '',
                 password_confirmation: '',
             })
@@ -26,14 +26,14 @@ export default {
     methods: {
         submit() {
             let $v = this;
-            this.form.put(route('users.password'), {
+            this.form.put(route('password.update'), {
                 preserveState: true,
                 preserveScroll: true,
                 onFinish: function () {
-                    $v.form.reset('old_password', 'password', 'password_confirmation')
+                    $v.form.reset('current_password', 'password', 'password_confirmation')
                 },
                 onSuccess: function () {
-                    $v.form.reset('old_password', 'password', 'password_confirmation')
+                    $v.form.reset('current_password', 'password', 'password_confirmation')
                     alert('Пароль изменен');
                 },
             });
@@ -47,8 +47,8 @@ export default {
     <form method="post" @submit.prevent="submit"  class="block" v-field-container>
         <h2>Изменить пароль</h2>
 
-        <field :errors="form.errors" for="old_password" label="Текущий пароль">
-            <input type="password" class="input" v-model="form.old_password"/>
+        <field :errors="form.errors" for="current_password" label="Текущий пароль">
+            <input type="password" class="input" v-model="form.current_password"/>
         </field>
 
         <field :errors="form.errors" for="password" label="Новый пароль">
